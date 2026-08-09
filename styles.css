@@ -677,6 +677,108 @@ section {
 }
 
 /* SECCIÓN ENCABEZADO OTROS SERVICIOS */
+
+/* GRID DE EFECTOS DE PESTAÑAS */
+.effects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.effect-card {
+  background: rgba(255,255,255,0.9);
+  backdrop-filter: blur(12px);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(201,91,132,0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.effect-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 25px rgba(201,91,132,0.3);
+}
+
+.effect-img-wrapper {
+  position: relative;
+  overflow: hidden;
+  height: 0;
+  padding-top: 75%; /* 4:3 aspect ratio */
+}
+.effect-img-wrapper img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+.effect-img-wrapper:hover img {
+  transform: scale(1.06);
+}
+
+.effect-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(255,255,255,0.8);
+  color: var(--pink-dark);
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  backdrop-filter: blur(4px);
+}
+
+.photo-hint {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background: rgba(0,0,0,0.5);
+  color: var(--white);
+  padding: 3px 6px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+}
+
+.effect-card-content {
+  padding: 18px 20px;
+}
+.effect-card-content h3 {
+  margin: 0 0 8px;
+  font-size: 1.3rem;
+  color: var(--text-dark);
+}
+.effect-desc {
+  font-size: 0.92rem;
+  color: var(--text-mid);
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+
+.effect-prices {
+  margin-top: 12px;
+}
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.price-label {
+  font-weight: 600;
+  color: var(--text-dark);
+}
+.price-amount {
+  background: var(--pink-soft);
+  color: var(--pink-dark);
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-weight: 600;
+}
 .other-services-header {
   text-align: center;
   margin: 70px auto 40px;
@@ -882,81 +984,108 @@ section {
   margin: 0;
 }
 
-/* FORMULARIO */
-.contacto-form-box {
-  background: linear-gradient(145deg, #fff5f9, var(--pink-light));
-  border: 1.5px solid var(--pink-soft);
+/* MAPA INTERACTIVO CON ESTILO ROSADO */
+.contacto-map-box {
+  background: linear-gradient(145deg, #ffffff 0%, #fff0f6 100%);
+  border: 2px solid var(--pink-soft);
   border-radius: var(--radius-xl);
-  padding: 36px 32px;
-  box-shadow: var(--shadow-card);
+  padding: 30px 24px;
+  box-shadow: 0 10px 30px rgba(201, 91, 132, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+  overflow: hidden;
 }
 
-.contacto-form-box h3 {
+.contacto-map-box::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, var(--pink-soft), var(--pink-main), var(--pink-dark));
+}
+
+.map-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.contacto-map-box h3 {
   font-family: 'Playfair Display', serif;
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   color: var(--text-dark);
-  margin-bottom: 24px;
+  margin: 0;
+}
+
+.location-badge {
+  background: #fce4ec;
+  color: var(--pink-dark);
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(201, 91, 132, 0.25);
+  box-shadow: 0 2px 8px rgba(201, 91, 132, 0.1);
+}
+
+.map-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-mid);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.map-container {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(201, 91, 132, 0.2);
+  border: 2px solid #f8bbd0;
+}
+
+#googleMapIframe {
+  display: block;
+  width: 100%;
+  height: 330px;
+  border: 0;
+  filter: hue-rotate(315deg) saturate(1.8) contrast(1.05) brightness(0.96);
+  transition: filter 0.3s ease;
+}
+
+#googleMapIframe:hover {
+  filter: hue-rotate(315deg) saturate(2.1) contrast(1.08) brightness(0.98);
+}
+
+.map-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, var(--pink-main) 0%, var(--pink-dark) 100%);
+  color: var(--white);
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 50px;
+  text-decoration: none;
+  box-shadow: 0 6px 20px rgba(201, 91, 132, 0.3);
+  transition: all 0.3s ease;
+  margin-top: 4px;
   text-align: center;
 }
 
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-group label {
-  display: block;
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--text-mid);
-  margin-bottom: 8px;
-  letter-spacing: 0.5px;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-  width: 100%;
-  padding: 13px 16px;
-  border: 1.5px solid var(--pink-soft);
-  border-radius: 12px;
-  font-family: 'Poppins', sans-serif;
-  font-size: 0.9rem;
-  color: var(--text-dark);
-  background: var(--white);
-  transition: var(--transition);
-  outline: none;
-  appearance: none;
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-  border-color: var(--pink-main);
-  box-shadow: 0 0 0 3px rgba(244, 167, 195, 0.25);
-}
-
-.form-group textarea { resize: vertical; min-height: 90px; }
-
-.form-btn {
-  width: 100%;
-  padding: 16px;
-  background: linear-gradient(135deg, var(--pink-main), var(--pink-dark));
+.map-btn:hover {
+  background: linear-gradient(135deg, var(--pink-dark) 0%, #a43a63 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(201, 91, 132, 0.45);
   color: var(--white);
-  border: none;
-  border-radius: 50px;
-  font-family: 'Poppins', sans-serif;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: var(--transition);
-  box-shadow: 0 6px 20px rgba(192, 80, 130, 0.35);
-  letter-spacing: 0.5px;
-}
-
-.form-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 32px rgba(192, 80, 130, 0.5);
-  background: linear-gradient(135deg, var(--pink-deep), var(--pink-dark));
 }
 
 /* ===========================
