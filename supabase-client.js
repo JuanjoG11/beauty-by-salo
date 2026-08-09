@@ -260,6 +260,34 @@ async function saveServiceData(serviceObj) {
   return true;
 }
 
+// Suscribirse a cambios en tiempo real en Supabase (Multi-dispositivo)
+function subscribeToRealtimeChanges(onUpdateCallback) {
+  if (supabaseClient) {
+    try {
+      supabaseClient
+        .channel('schema-db-changes')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'services' }, async () => {
+          const freshData = await fetchAllServices();
+          if (typeof onUpdateCallback === 'function') onUpdateCallback(freshData);
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'service_photos' }, async () => {
+          const freshData = await fetchAllServices();
+          if (typeof onUpdateCallback === 'function') onUpdateCallback(freshData);
+        })
+        .subscribe();
+    } catch (err) {
+      console.warn('⚠️ No se pudo suscribir a Realtime Supabase:', err);
+    }
+  }
+
+  // Polling de respaldo cada 12 segundos para sincronización multiplataforma
+  setInterval(async () => {
+    const freshData = await fetchAllServices();
+    if (typeof onUpdateCallback === 'function') onUpdateCallback(freshData);
+  }, 12000);
+}
+
+
 // Subir foto a Supabase Storage (o fallback base64)
 async function uploadPhotoFile(file, serviceId) {
   if (supabaseClient) {

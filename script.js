@@ -94,10 +94,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   };
 
-  // Cargar datos asincrónicos
+  // Cargar datos asincrónicos y activar sincronización en tiempo real multiplataforma
   if (typeof fetchAllServices === 'function') {
     const servicesData = await fetchAllServices();
     updateGridFromServices(servicesData);
+    if (typeof subscribeToRealtimeChanges === 'function') {
+      subscribeToRealtimeChanges(updateGridFromServices);
+    }
   }
 
   // ───────────────────────────

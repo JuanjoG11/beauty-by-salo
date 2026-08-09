@@ -100,6 +100,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     selectService(currentServiceId);
   };
 
+  if (typeof subscribeToRealtimeChanges === 'function') {
+    subscribeToRealtimeChanges(async (freshServices) => {
+      services = freshServices;
+      renderSidebarMenu();
+      selectService(currentServiceId);
+    });
+  }
+
   const renderSidebarMenu = () => {
     if (!serviceMenuList) return;
     serviceMenuList.innerHTML = '';

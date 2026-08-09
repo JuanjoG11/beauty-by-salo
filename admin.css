@@ -570,3 +570,120 @@ body {
   opacity: 1;
   transform: translateY(0);
 }
+
+/* ==========================================
+   📱 ADAPTACIÓN RESPONSIVA COMPLETA (MÓVILES Y TABLETS)
+   ========================================== */
+
+@media (max-width: 900px) {
+  .admin-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 20px;
+  }
+
+  .admin-header-actions {
+    width: 100%;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .admin-container {
+    grid-template-columns: 1fr;
+    margin: 16px auto;
+    padding: 0 12px;
+    gap: 16px;
+  }
+
+  .admin-sidebar {
+    padding: 16px 14px;
+  }
+
+  /* Menú de servicios horizontal tipo scroll en móviles */
+  .service-menu {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .service-menu::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .service-menu::-webkit-scrollbar-thumb {
+    background: var(--pink-main);
+    border-radius: 10px;
+  }
+
+  .menu-item {
+    flex-shrink: 0;
+    white-space: nowrap;
+    padding: 8px 14px;
+    gap: 8px;
+    scroll-snap-align: start;
+  }
+
+  .service-editor-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .service-editor-header button {
+    width: 100%;
+  }
+
+  .photos-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .admin-photo-card .photo-preview {
+    height: 120px;
+  }
+
+  .admin-btn.cover-btn {
+    font-size: 0.7rem;
+    padding: 4px 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .pin-card {
+    padding: 28px 20px;
+  }
+
+  .admin-card {
+    padding: 18px 14px;
+  }
+
+  .upload-dropzone {
+    padding: 20px 12px;
+  }
+
+  .upload-icon {
+    font-size: 2rem;
+  }
+
+  .photos-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .admin-photo-card .photo-preview {
+    height: 105px;
+  }
+
+  .admin-toast {
+    left: 12px;
+    right: 12px;
+    text-align: center;
+    bottom: 16px;
+  }
+}
+
