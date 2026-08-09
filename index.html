@@ -4,11 +4,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Beauty Studio by Salomé Osorio</title>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;500;600&display=swap"
-    rel="stylesheet" />
+  <title>Beauty Studio by Salomé Osorio · Pestañas & Cosmetología</title>
+  <meta name="description" content="Estudio de belleza profesional por Salomé Osorio en Pereira. Especialista en pestañas pelo a pelo, limpieza facial, hidralips y tratamientos de belleza." />
+  
+  <!-- Fuentes Google -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  
+  <!-- CSS Principal -->
   <link rel="stylesheet" href="styles.css" />
+
+  <!-- Supabase JS Client CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
 </head>
 
 <body>
@@ -17,9 +24,8 @@
   <header class="hero">
     <!-- Emojis flotantes de pestañas y destellos -->
     <div class="floating-petals" aria-hidden="true">
-      <span>👁️</span><span>✨</span><span>👁️‍🗨️</span><span>✨</span>
-      <span>👁️</span><span>💖</span><span>👁️</span><span>✨</span>
-      <span>👁️‍🗨️</span><span>💕</span><span>👁️</span><span>✨</span>
+      <span>✨</span><span>🌸</span><span>✨</span>
+      <span>💖</span><span>✨</span><span>🌸</span>
     </div>
 
     <div class="hero-content">
@@ -34,9 +40,7 @@
           <div class="bubble-tail"></div>
         </div>
         <div class="avatar-container">
-          <!-- Reemplaza la imagen con tu avatar -->
           <img src="avatar.png" alt="Salomé - Lashista y Cosmetóloga" class="avatar-img" id="avatarImg" />
-          <!-- Placeholder si no hay imagen -->
           <div class="avatar-placeholder" id="avatarPlaceholder">
             <span>🌸</span>
           </div>
@@ -65,325 +69,332 @@
     </div>
   </header>
 
-  <!-- ✨ SECCIÓN SERVICIOS -->
+  <!-- ✨ SECCIÓN SERVICIOS Y EFECTOS -->
   <section class="servicios" id="servicios">
     <div class="section-title">
       <p class="section-tag">Catálogo de Miradas</p>
       <h2>Efectos de Pestañas</h2>
       <div class="divider">🌸 ─── 🌸 ─── 🌸</div>
-      <p class="section-subtitle">Explora cada técnica co
-        <!-- GRID DE EFECTOS DE PESTAÑAS (UNA CARD POR CADA EFECTO CON FOTO Y PRECIO DE RETOQUE ABAJO) -->
-      <div class="effects-grid">
+      <p class="section-subtitle">Explora cada técnica · <strong>Toca cualquier efecto para ver todas las fotos 📸</strong></p>
+    </div>
 
-        <!-- CARD 1: EFECTO NATURAL -->
-        <div class="effect-card" data-aos="fade-up">
-          <div class="effect-img-wrapper" data-photos="img/efecto-natural.jpg,img/efecto-natural-2.jpg"
-            data-title="Efecto Natural"
-            data-desc="Acabado suave y sutil, perfecto si buscas resaltar tus pestañas de forma 100% natural para el día a día."
-            data-wa="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20el%20*Efecto%20Natural*.">
-            <img src="img/efecto-natural.jpg" alt="Pestañas Efecto Natural" class="effect-img" />
-            <span class="effect-badge">🌸 Sutil & Delicado</span>
-            <span class="photo-hint">📸 Toca para ver fotos</span>
-          </div>
-          <div class="effect-card-content">
-            <h3>Efecto Natural</h3>
-            <p class="effect-desc">Acabado suave y sutil, perfecto si buscas resaltar tus pestañas de forma 100% natural
-              para el día a día.</p>
+    <!-- GRID DE EFECTOS DE PESTAÑAS -->
+    <div class="effects-grid">
 
-            <div class="effect-prices">
-              <div class="price-row main-set">
-                <span class="price-label">✨ Montaje (Set Nuevo):</span>
-                <span class="price-amount">$70.000</span>
-              </div>
-              <div class="price-row retouch-set">
-                <span class="price-label">✂️ Precio de Retoque:</span>
-                <span class="price-amount">$45.000</span>
-              </div>
-            </div>
-
-            <a href="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20el%20*Efecto%20Natural*."
-              class="effect-btn" target="_blank" rel="noopener">Agendar este Efecto 💕</a>
-          </div>
+      <!-- CARD 1: EFECTO NATURAL -->
+      <div class="effect-card" data-service-id="efecto-natural" data-aos="fade-up">
+        <div class="effect-img-wrapper" 
+             data-photos="img/efecto-natural.jpg,img/efecto-natural-2.jpg"
+             data-title="Efecto Natural"
+             data-desc="Acabado suave y sutil, perfecto si buscas resaltar tus pestañas de forma 100% natural para el día a día."
+             data-wa="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20el%20*Efecto%20Natural*.">
+          <img src="img/efecto-natural.jpg" alt="Pestañas Efecto Natural" class="effect-img" />
+          <span class="effect-badge">🌸 Sutil & Delicado</span>
+          <span class="photo-hint">📸 2 fotos · Toca para ver</span>
         </div>
+        <div class="effect-card-content">
+          <h3>Efecto Natural</h3>
+          <p class="effect-desc">Acabado suave y sutil, perfecto si buscas resaltar tus pestañas de forma 100% natural para el día a día.</p>
 
-        <!-- CARD 2: EFECTO PESTAÑINA -->
-        <div class="effect-card" data-aos="fade-up" data-aos-delay="100">
-          <div class="effect-img-wrapper" data-photos="img/efecto-pestanina.jpg" data-title="Efecto Pestañina"
-            data-desc="Resalta tu mirada con el acabado de la pestaña recién maquillada con rímel: definido, oscuro y con brillo."
-            data-wa="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20el%20*Efecto%20Pesta%C3%B1ina*.">
-            <img src="img/efecto-pestanina.jpg" alt="Pestañas Efecto Pestañina" class="effect-img" />
-            <span class="effect-badge">💄 Efecto Rímel</span>
-            <span class="photo-hint">📸 Toca para ver fotos</span>
-          </div>
-          <div class="effect-card-content">
-            <h3>Efecto Pestañina</h3>
-            <p class="effect-desc">Resalta tu mirada con el acabado de la pestaña recién maquillada con rímel: definido,
-              oscuro y con brillo.</p>
-
-            <div class="effect-prices">
-              <div class="price-row main-set">
-                <span class="price-label">✨ Montaje (Set Nuevo):</span>
-                <span class="price-amount">$80.000</span>
-              </div>
-              <div class="price-row retouch-set">
-                <span class="price-label">✂️ Precio de Retoque:</span>
-                <span class="price-amount">$50.000</span>
-              </div>
+          <div class="effect-prices">
+            <div class="price-row main-set">
+              <span class="price-label">✨ Montaje (Set Nuevo):</span>
+              <span class="price-amount">$70.000</span>
             </div>
-
-            <a href="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20el%20*Efecto%20Pesta%C3%B1ina*."
-              class="effect-btn" target="_blank" rel="noopener">Agendar este Efecto 💕</a>
-          </div>
-        </div>
-
-        <!-- CARD 3: EFECTO 2D -->
-        <div class="effect-card" data-aos="fade-up" data-aos-delay="200">
-          <div class="effect-img-wrapper" data-photos="img/efecto-2d.jpg,img/efecto-2d-2.jpg" data-title="Efecto 2D"
-            data-desc="Dos extensiones livianas por pestaña natural. Aporta más densidad y tupidez manteniendo ligereza."
-            data-wa="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20el%20*Efecto%202D*.">
-            <img src="img/efecto-2d.jpg" alt="Pestañas Efecto 2D" class="effect-img" />
-            <span class="effect-badge">⭐ Volumen Intermedio</span>
-            <span class="photo-hint">📸 Toca para ver fotos</span>
-          </div>
-          <div class="effect-card-content">
-            <h3>Efecto 2D</h3>
-            <p class="effect-desc">Dos extensiones livianas por pestaña natural. Aporta más densidad y tupidez
-              manteniendo ligereza.</p>
-
-            <div class="effect-prices">
-              <div class="price-row main-set">
-                <span class="price-label">✨ Montaje (Set Nuevo):</span>
-                <span class="price-amount">$85.000</span>
-              </div>
-              <div class="price-row retouch-set">
-                <span class="price-label">✂️ Precio de Retoque:</span>
-                <span class="price-amount">$50.000</span>
-              </div>
+            <div class="price-row retouch-set">
+              <span class="price-label">✂️ Precio de Retoque:</span>
+              <span class="price-amount">$45.000</span>
             </div>
-
-            <a href="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20el%20*Efecto%202D*."
-              class="effect-btn" target="_blank" rel="noopener">Agendar este Efecto 💕</a>
           </div>
+
+          <a href="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20el%20*Efecto%20Natural*."
+            class="effect-btn" target="_blank" rel="noopener">Agendar este Efecto 💕</a>
         </div>
-
-        <!-- CARD 4: EFECTO 3D SUTIL -->
-        <div class="effect-card" data-aos="fade-up">
-          <div class="effect-img-wrapper" data-photos="img/efecto-3d-sutil.jpg" data-title="Efecto 3D Sutil"
-            data-desc="Abanicos delgados de 3 fibras con acabado volumétrico pero muy armonioso y libre de pesadez."
-            data-wa="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20el%20*Efecto%203D%20Sutil*.">
-            <img src="img/efecto-3d-sutil.jpg" alt="Pestañas Efecto 3D Sutil" class="effect-img" />
-            <span class="effect-badge">✨ Elegancia 3D</span>
-            <span class="photo-hint">📸 Toca para ver fotos</span>
-          </div>
-          <div class="effect-card-content">
-            <h3>Efecto 3D Sutil</h3>
-            <p class="effect-desc">Abanicos delgados de 3 fibras con acabado volumétrico pero muy armonioso y libre de
-              pesadez.</p>
-
-            <div class="effect-prices">
-              <div class="price-row main-set">
-                <span class="price-label">✨ Montaje (Set Nuevo):</span>
-                <span class="price-amount">$90.000</span>
-              </div>
-              <div class="price-row retouch-set">
-                <span class="price-label">✂️ Precio de Retoque:</span>
-                <span class="price-amount">$65.000</span>
-              </div>
-            </div>
-
-            <a href="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20el%20*Efecto%203D%20Sutil*."
-              class="effect-btn" target="_blank" rel="noopener">Agendar este Efecto 💕</a>
-          </div>
-        </div>
-
-        <!-- CARD 5: EFECTO 3D -->
-        <div class="effect-card" data-aos="fade-up" data-aos-delay="100">
-          <div class="effect-img-wrapper" data-photos="img/efecto-3d.jpg" data-title="Efecto 3D"
-            data-desc="Volumen completo, tupido y despampanante. Ideal para quienes aman una mirada intensa y deslumbrante."
-            data-wa="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20el%20*Efecto%203D*.">
-            <img src="img/efecto-3d.jpg" alt="Pestañas Efecto 3D" class="effect-img" />
-            <span class="effect-badge">🔥 Máximo Volumen</span>
-            <span class="photo-hint">📸 Toca para ver fotos</span>
-          </div>
-          <div class="effect-card-content">
-            <h3>Efecto 3D</h3>
-            <p class="effect-desc">Volumen completo, tupido y despampanante. Ideal para quienes aman una mirada intensa
-              y deslumbrante.</p>
-
-            <div class="effect-prices">
-              <div class="price-row main-set">
-                <span class="price-label">✨ Montaje (Set Nuevo):</span>
-                <span class="price-amount">$100.000</span>
-              </div>
-              <div class="price-row retouch-set">
-                <span class="price-label">✂️ Precio de Retoque:</span>
-                <span class="price-amount">$65.000</span>
-              </div>
-            </div>
-
-            <a href="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20el%20*Efecto%203D*."
-              class="effect-btn" target="_blank" rel="noopener">Agendar este Efecto 💕</a>
-          </div>
-        </div>
-
-        <!-- CARD 6: EFECTO WHISPY -->
-        <div class="effect-card" data-aos="fade-up" data-aos-delay="200">
-          <div class="effect-img-wrapper" data-photos="img/efecto-whispy.jpg" data-title="Efecto Whispy"
-            data-desc="Juego de picos y alturas con textura desestructurada. Súper chic, coqueto y de última tendencia."
-            data-wa="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20el%20*Efecto%20Whispy*.">
-            <img src="img/efecto-whispy.jpg" alt="Pestañas Efecto Whispy" class="effect-img" />
-            <span class="effect-badge">👑 Tendencia Kim K</span>
-            <span class="photo-hint">📸 Toca para ver fotos</span>
-          </div>
-          <div class="effect-card-content">
-            <h3>Efecto Whispy</h3>
-            <p class="effect-desc">Juego de picos y alturas con textura desestructurada. Súper chic, coqueto y de última
-              tendencia.</p>
-
-            <div class="effect-prices">
-              <div class="price-row main-set">
-                <span class="price-label">✨ Montaje (Set Nuevo):</span>
-                <span class="price-amount">$110.000</span>
-              </div>
-              <div class="price-row retouch-set">
-                <span class="price-label">✂️ Precio de Retoque:</span>
-                <span class="price-amount">$70.000</span>
-              </div>
-            </div>
-
-            <a href="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20el%20*Efecto%20Whispy*."
-              class="effect-btn" target="_blank" rel="noopener">Agendar este Efecto 💕</a>
-          </div>
-        </div>
-
       </div>
 
-      <!-- SECCIÓN OTROS SERVICIOS -->
-      <div class="other-services-header">
-        <p class="section-tag">Tratamientos & Cuidados</p>
-        <h3>Faciales, Hidralips & Adicionales</h3>
-        <p>Cada tratamiento cuenta con su demostración visual y precios claros para tu conveniencia.</p>
+      <!-- CARD 2: EFECTO PESTAÑINA -->
+      <div class="effect-card" data-service-id="efecto-pestanina" data-aos="fade-up" data-aos-delay="100">
+        <div class="effect-img-wrapper" 
+             data-photos="img/efecto-pestanina.jpg" 
+             data-title="Efecto Pestañina"
+             data-desc="Resalta tu mirada con el acabado de la pestaña recién maquillada con rímel: definido, oscuro y con brillo."
+             data-wa="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20el%20*Efecto%20Pesta%C3%B1ina*.">
+          <img src="img/efecto-pestanina.jpg" alt="Pestañas Efecto Pestañina" class="effect-img" />
+          <span class="effect-badge">💄 Efecto Rímel</span>
+          <span class="photo-hint">📸 Toca para ver fotos</span>
+        </div>
+        <div class="effect-card-content">
+          <h3>Efecto Pestañina</h3>
+          <p class="effect-desc">Resalta tu mirada con el acabado de la pestaña recién maquillada con rímel: definido, oscuro y con brillo.</p>
+
+          <div class="effect-prices">
+            <div class="price-row main-set">
+              <span class="price-label">✨ Montaje (Set Nuevo):</span>
+              <span class="price-amount">$80.000</span>
+            </div>
+            <div class="price-row retouch-set">
+              <span class="price-label">✂️ Precio de Retoque:</span>
+              <span class="price-amount">$50.000</span>
+            </div>
+          </div>
+
+          <a href="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20el%20*Efecto%20Pesta%C3%B1ina*."
+            class="effect-btn" target="_blank" rel="noopener">Agendar este Efecto 💕</a>
+        </div>
       </div>
 
-      <div class="effects-grid">
-
-        <!-- CARD: HIDRATACIÓN FACIAL -->
-        <div class="effect-card" data-aos="fade-up">
-          <div class="effect-img-wrapper" data-photos="img/hidratacion-facial.jpg" data-title="Hidratación Facial"
-            data-desc="Nutrición e hidratación profunda con sueros concentrados para devolver la vitalidad a tu rostro."
-            data-wa="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20una%20*Hidrataci%C3%B3n%20Facial*.">
-            <img src="img/hidratacion-facial.jpg" alt="Hidratación Facial" class="effect-img" />
-            <span class="effect-badge">💧 Piel Radiante</span>
-            <span class="photo-hint">📸 Toca para ver fotos</span>
-          </div>
-          <div class="effect-card-content">
-            <h3>Hidratación Facial</h3>
-            <p class="effect-desc">Nutrición e hidratación profunda con sueros concentrados para devolver la vitalidad,
-              luminosidad y suavidad natural a tu rostro.</p>
-
-            <div class="effect-prices">
-              <div class="price-row main-set">
-                <span class="price-label">✨ Valor por sesión:</span>
-                <span class="price-amount">$55.000</span>
-              </div>
-            </div>
-
-            <a href="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20una%20*Hidrataci%C3%B3n%20Facial*."
-              class="effect-btn" target="_blank" rel="noopener">Agendar Hidratación 💕</a>
-          </div>
+      <!-- CARD 3: EFECTO 2D -->
+      <div class="effect-card" data-service-id="efecto-2d" data-aos="fade-up" data-aos-delay="200">
+        <div class="effect-img-wrapper" 
+             data-photos="img/efecto-2d.jpg,img/efecto-2d-2.jpg" 
+             data-title="Efecto 2D"
+             data-desc="Dos extensiones livianas por pestaña natural. Aporta más densidad y tupidez manteniendo ligereza."
+             data-wa="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20el%20*Efecto%202D*.">
+          <img src="img/efecto-2d.jpg" alt="Pestañas Efecto 2D" class="effect-img" />
+          <span class="effect-badge">⭐ Volumen Intermedio</span>
+          <span class="photo-hint">📸 2 fotos · Toca para ver</span>
         </div>
+        <div class="effect-card-content">
+          <h3>Efecto 2D</h3>
+          <p class="effect-desc">Dos extensiones livianas por pestaña natural. Aporta más densidad y tupidez manteniendo ligereza.</p>
 
-        <!-- CARD: LIMPIEZA FACIAL -->
-        <div class="effect-card" data-aos="fade-up" data-aos-delay="100">
-          <div class="effect-img-wrapper" data-photos="img/limpieza-facial.jpg" data-title="Limpieza Facial"
-            data-desc="Desintoxicación de poros, exfoliación y extracción profunda para una piel limpia y sana."
-            data-wa="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20una%20*Limpieza%20Facial*.">
-            <img src="img/limpieza-facial.jpg" alt="Limpieza Facial Profunda" class="effect-img" />
-            <span class="effect-badge">🌿 Renovación Cutánea</span>
-            <span class="photo-hint">📸 Toca para ver fotos</span>
-          </div>
-          <div class="effect-card-content">
-            <h3>Limpieza Facial</h3>
-            <p class="effect-desc">Desintoxicación de poros, exfoliación y extracción profunda. Ideal para renovar tu
-              piel y tratar problemas como acné, melasma o envejecimiento.</p>
-
-            <div class="effect-prices">
-              <div class="price-row main-set">
-                <span class="price-label">✨ Valor por sesión:</span>
-                <span class="price-amount">$70.000</span>
-              </div>
+          <div class="effect-prices">
+            <div class="price-row main-set">
+              <span class="price-label">✨ Montaje (Set Nuevo):</span>
+              <span class="price-amount">$85.000</span>
             </div>
-
-            <a href="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20una%20*Limpieza%20Facial*."
-              class="effect-btn" target="_blank" rel="noopener">Agendar Limpieza 💕</a>
-          </div>
-        </div>
-
-        <!-- CARD: HIDRALIPS -->
-        <div class="effect-card" data-aos="fade-up" data-aos-delay="200">
-          <div class="effect-img-wrapper" data-photos="img/hidralips.jpg" data-title="Hidralips"
-            data-desc="Tratamiento de ultrahidratación labial que restaura el volumen natural y suaviza líneas."
-            data-wa="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20*Hidralips*.">
-            <img src="img/hidralips.jpg" alt="Tratamiento Hidralips" class="effect-img" />
-            <span class="effect-badge">💋 Labios Hidratados</span>
-            <span class="photo-hint">📸 Toca para ver fotos</span>
-          </div>
-          <div class="effect-card-content">
-            <h3>Hidralips</h3>
-            <p class="effect-desc">Tratamiento de ultrahidratación labial que restaura el volumen natural, suaviza
-              líneas y elimina la sequedad.</p>
-
-            <div class="effect-prices">
-              <div class="price-row main-set">
-                <span class="price-label">🌸 1 sesión:</span>
-                <span class="price-amount">$55.000</span>
-              </div>
-              <div class="price-row main-set">
-                <span class="price-label">🌸 Paquete 2 sesiones:</span>
-                <span class="price-amount">$95.000</span>
-              </div>
-              <div class="price-row retouch-set">
-                <span class="price-label">💄 Paquete 3 sesiones:</span>
-                <span class="price-amount">$150.000</span>
-              </div>
+            <div class="price-row retouch-set">
+              <span class="price-label">✂️ Precio de Retoque:</span>
+              <span class="price-amount">$50.000</span>
             </div>
-
-            <a href="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20*Hidralips*."
-              class="effect-btn" target="_blank" rel="noopener">Agendar Hidralips 💕</a>
           </div>
+
+          <a href="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20el%20*Efecto%202D*."
+            class="effect-btn" target="_blank" rel="noopener">Agendar este Efecto 💕</a>
         </div>
-
-        <!-- CARD: ADICIONALES -->
-        <div class="effect-card" data-aos="fade-up" data-aos-delay="300">
-          <div class="effect-img-wrapper" data-photos="img/adicionales.jpg" data-title="Adicionales & Retiros"
-            data-desc="Detalles de color, pedrería o servicio de retiro seguro para tus pestañas."
-            data-wa="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20un%20*Servicio%20Adicional*.">
-            <img src="img/adicionales.jpg" alt="Adicionales y Retiro de Pestañas" class="effect-img" />
-            <span class="effect-badge">✨ Complementos</span>
-            <span class="photo-hint">📸 Toca para ver fotos</span>
-          </div>
-          <div class="effect-card-content">
-            <h3>Adicionales & Retiros</h3>
-            <p class="effect-desc">Agrega detalles de color o pedrería a tu mirada, o realiza un retiro seguro y
-              delicado de tus extensiones.</p>
-
-            <div class="effect-prices">
-              <div class="price-row main-set">
-                <span class="price-label">🎨 Color / Apliques:</span>
-                <span class="price-amount">$7.000 / $5.000</span>
-              </div>
-              <div class="price-row retouch-set">
-                <span class="price-label">✂️ Retiro (Cambio / Completo):</span>
-                <span class="price-amount">$5.000 / $10.000</span>
-              </div>
-            </div>
-
-            <a href="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20un%20*Servicio%20Adicional*."
-              class="effect-btn" target="_blank" rel="noopener">Agendar Adicional 💕</a>
-          </div>
-        </div>
-
       </div>
+
+      <!-- CARD 4: EFECTO 3D SUTIL -->
+      <div class="effect-card" data-service-id="efecto-3d-sutil" data-aos="fade-up">
+        <div class="effect-img-wrapper" 
+             data-photos="img/efecto-3d-sutil.jpg" 
+             data-title="Efecto 3D Sutil"
+             data-desc="Abanicos delgados de 3 fibras con acabado volumétrico pero muy armonioso y libre de pesadez."
+             data-wa="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20el%20*Efecto%203D%20Sutil*.">
+          <img src="img/efecto-3d-sutil.jpg" alt="Pestañas Efecto 3D Sutil" class="effect-img" />
+          <span class="effect-badge">✨ Elegancia 3D</span>
+          <span class="photo-hint">📸 Toca para ver fotos</span>
+        </div>
+        <div class="effect-card-content">
+          <h3>Efecto 3D Sutil</h3>
+          <p class="effect-desc">Abanicos delgados de 3 fibras con acabado volumétrico pero muy armonioso y libre de pesadez.</p>
+
+          <div class="effect-prices">
+            <div class="price-row main-set">
+              <span class="price-label">✨ Montaje (Set Nuevo):</span>
+              <span class="price-amount">$90.000</span>
+            </div>
+            <div class="price-row retouch-set">
+              <span class="price-label">✂️ Precio de Retoque:</span>
+              <span class="price-amount">$65.000</span>
+            </div>
+          </div>
+
+          <a href="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20el%20*Efecto%203D%20Sutil*."
+            class="effect-btn" target="_blank" rel="noopener">Agendar este Efecto 💕</a>
+        </div>
+      </div>
+
+      <!-- CARD 5: EFECTO 3D -->
+      <div class="effect-card" data-service-id="efecto-3d" data-aos="fade-up" data-aos-delay="100">
+        <div class="effect-img-wrapper" 
+             data-photos="img/efecto-3d.jpg" 
+             data-title="Efecto 3D"
+             data-desc="Volumen completo, tupido y despampanante. Ideal para quienes aman una mirada intensa y deslumbrante."
+             data-wa="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20el%20*Efecto%203D*.">
+          <img src="img/efecto-3d.jpg" alt="Pestañas Efecto 3D" class="effect-img" />
+          <span class="effect-badge">🔥 Máximo Volumen</span>
+          <span class="photo-hint">📸 Toca para ver fotos</span>
+        </div>
+        <div class="effect-card-content">
+          <h3>Efecto 3D</h3>
+          <p class="effect-desc">Volumen completo, tupido y despampanante. Ideal para quienes aman una mirada intensa y deslumbrante.</p>
+
+          <div class="effect-prices">
+            <div class="price-row main-set">
+              <span class="price-label">✨ Montaje (Set Nuevo):</span>
+              <span class="price-amount">$100.000</span>
+            </div>
+            <div class="price-row retouch-set">
+              <span class="price-label">✂️ Precio de Retoque:</span>
+              <span class="price-amount">$65.000</span>
+            </div>
+          </div>
+
+          <a href="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20el%20*Efecto%203D*."
+            class="effect-btn" target="_blank" rel="noopener">Agendar este Efecto 💕</a>
+        </div>
+      </div>
+
+      <!-- CARD 6: EFECTO WHISPY -->
+      <div class="effect-card" data-service-id="efecto-whispy" data-aos="fade-up" data-aos-delay="200">
+        <div class="effect-img-wrapper" 
+             data-photos="img/efecto-whispy.jpg" 
+             data-title="Efecto Whispy"
+             data-desc="Juego de picos y alturas con textura desestructurada. Súper chic, coqueto y de última tendencia."
+             data-wa="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20el%20*Efecto%20Whispy*.">
+          <img src="img/efecto-whispy.jpg" alt="Pestañas Efecto Whispy" class="effect-img" />
+          <span class="effect-badge">👑 Tendencia Kim K</span>
+          <span class="photo-hint">📸 Toca para ver fotos</span>
+        </div>
+        <div class="effect-card-content">
+          <h3>Efecto Whispy</h3>
+          <p class="effect-desc">Juego de picos y alturas con textura desestructurada. Súper chic, coqueto y de última tendencia.</p>
+
+          <div class="effect-prices">
+            <div class="price-row main-set">
+              <span class="price-label">✨ Montaje (Set Nuevo):</span>
+              <span class="price-amount">$110.000</span>
+            </div>
+            <div class="price-row retouch-set">
+              <span class="price-label">✂️ Precio de Retoque:</span>
+              <span class="price-amount">$70.000</span>
+            </div>
+          </div>
+
+          <a href="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20el%20*Efecto%20Whispy*."
+            class="effect-btn" target="_blank" rel="noopener">Agendar este Efecto 💕</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SECCIÓN OTROS SERVICIOS -->
+    <div class="other-services-header">
+      <p class="section-tag">Tratamientos & Cuidados</p>
+      <h3>Faciales, Hidralips & Adicionales</h3>
+      <p>Cada tratamiento cuenta con su demostración visual y precios claros. Toca cualquier card para ampliar fotos.</p>
+    </div>
+
+    <div class="effects-grid">
+
+      <!-- CARD: HIDRATACIÓN FACIAL -->
+      <div class="effect-card" data-service-id="hidratacion-facial" data-aos="fade-up">
+        <div class="effect-img-wrapper" 
+             data-photos="img/hidratacion-facial.jpg" 
+             data-title="Hidratación Facial"
+             data-desc="Nutrición e hidratación profunda con sueros concentrados para devolver la vitalidad a tu rostro."
+             data-wa="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20una%20*Hidrataci%C3%B3n%20Facial*.">
+          <img src="img/hidratacion-facial.jpg" alt="Hidratación Facial" class="effect-img" />
+          <span class="effect-badge">💧 Piel Radiante</span>
+          <span class="photo-hint">📸 Toca para ver fotos</span>
+        </div>
+        <div class="effect-card-content">
+          <h3>Hidratación Facial</h3>
+          <p class="effect-desc">Nutrición e hidratación profunda con sueros concentrados para devolver la vitalidad, luminosidad y suavidad natural a tu rostro.</p>
+
+          <div class="effect-prices">
+            <div class="price-row main-set">
+              <span class="price-label">✨ Valor por sesión:</span>
+              <span class="price-amount">$55.000</span>
+            </div>
+          </div>
+
+          <a href="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20una%20*Hidrataci%C3%B3n%20Facial*."
+            class="effect-btn" target="_blank" rel="noopener">Agendar Hidratación 💕</a>
+        </div>
+      </div>
+
+      <!-- CARD: LIMPIEZA FACIAL -->
+      <div class="effect-card" data-service-id="limpieza-facial" data-aos="fade-up" data-aos-delay="100">
+        <div class="effect-img-wrapper" 
+             data-photos="img/limpieza-facial.jpg" 
+             data-title="Limpieza Facial"
+             data-desc="Desintoxicación de poros, exfoliación y extracción profunda para una piel limpia y sana."
+             data-wa="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20una%20*Limpieza%20Facial*.">
+          <img src="img/limpieza-facial.jpg" alt="Limpieza Facial Profunda" class="effect-img" />
+          <span class="effect-badge">🌿 Renovación Cutánea</span>
+          <span class="photo-hint">📸 Toca para ver fotos</span>
+        </div>
+        <div class="effect-card-content">
+          <h3>Limpieza Facial</h3>
+          <p class="effect-desc">Desintoxicación de poros, exfoliación y extracción profunda. Ideal para renovar tu piel y tratar imperfecciones.</p>
+
+          <div class="effect-prices">
+            <div class="price-row main-set">
+              <span class="price-label">✨ Valor por sesión:</span>
+              <span class="price-amount">$70.000</span>
+            </div>
+          </div>
+
+          <a href="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20una%20*Limpieza%20Facial*."
+            class="effect-btn" target="_blank" rel="noopener">Agendar Limpieza 💕</a>
+        </div>
+      </div>
+
+      <!-- CARD: HIDRALIPS -->
+      <div class="effect-card" data-service-id="hidralips" data-aos="fade-up" data-aos-delay="200">
+        <div class="effect-img-wrapper" 
+             data-photos="img/hidralips.jpg" 
+             data-title="Hidralips"
+             data-desc="Tratamiento de ultrahidratación labial que restaura el volumen natural y suaviza líneas."
+             data-wa="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20*Hidralips*.">
+          <img src="img/hidralips.jpg" alt="Tratamiento Hidralips" class="effect-img" />
+          <span class="effect-badge">💋 Labios Hidratados</span>
+          <span class="photo-hint">📸 Toca para ver fotos</span>
+        </div>
+        <div class="effect-card-content">
+          <h3>Hidralips</h3>
+          <p class="effect-desc">Tratamiento de ultrahidratación labial que restaura el volumen natural, suaviza líneas y elimina la sequedad.</p>
+
+          <div class="effect-prices">
+            <div class="price-row main-set">
+              <span class="price-label">🌸 1 sesión / 2 sesiones:</span>
+              <span class="price-amount">$55.000 / $95.000</span>
+            </div>
+            <div class="price-row retouch-set">
+              <span class="price-label">💄 Paquete 3 sesiones:</span>
+              <span class="price-amount">$150.000</span>
+            </div>
+          </div>
+
+          <a href="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20*Hidralips*."
+            class="effect-btn" target="_blank" rel="noopener">Agendar Hidralips 💕</a>
+        </div>
+      </div>
+
+      <!-- CARD: ADICIONALES -->
+      <div class="effect-card" data-service-id="adicionales" data-aos="fade-up" data-aos-delay="300">
+        <div class="effect-img-wrapper" 
+             data-photos="img/adicionales.jpg" 
+             data-title="Adicionales & Retiros"
+             data-desc="Detalles de color, pedrería o servicio de retiro seguro para tus pestañas."
+             data-wa="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20un%20*Servicio%20Adicional*.">
+          <img src="img/adicionales.jpg" alt="Adicionales y Retiro de Pestañas" class="effect-img" />
+          <span class="effect-badge">✨ Complementos</span>
+          <span class="photo-hint">📸 Toca para ver fotos</span>
+        </div>
+        <div class="effect-card-content">
+          <h3>Adicionales & Retiros</h3>
+          <p class="effect-desc">Agrega detalles de color o pedrería a tu mirada, o realiza un retiro seguro y delicado de tus extensiones.</p>
+
+          <div class="effect-prices">
+            <div class="price-row main-set">
+              <span class="price-label">🎨 Color / Apliques:</span>
+              <span class="price-amount">$7.000 / $5.000</span>
+            </div>
+            <div class="price-row retouch-set">
+              <span class="price-label">✂️ Retiro (Cambio / Completo):</span>
+              <span class="price-amount">$5.000 / $10.000</span>
+            </div>
+          </div>
+
+          <a href="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20un%20*Servicio%20Adicional*."
+            class="effect-btn" target="_blank" rel="noopener">Agendar Adicional 💕</a>
+        </div>
+      </div>
+
+    </div>
   </section>
 
   <!-- ✨ SECCIÓN POR QUÉ ELEGIRME -->
@@ -420,7 +431,6 @@
     </div>
   </section>
 
-
   <!-- ✨ CONTACTO Y UBICACIÓN -->
   <section class="contacto" id="contacto">
     <div class="section-title">
@@ -430,8 +440,7 @@
     </div>
     <div class="contacto-content">
       <div class="contacto-info">
-        <p class="contacto-texto">¿Lista para consentirte? 💅 Escríbeme a WhatsApp para agendar tu cita y déjame
-          ayudarte a lucir espectacular.</p>
+        <p class="contacto-texto">¿Lista para consentirte? 💅 Escríbeme a WhatsApp para agendar tu cita y déjame ayudarte a lucir espectacular.</p>
         <div class="contacto-items">
           <a href="https://wa.me/573126879434" class="contacto-item whatsapp" target="_blank" rel="noopener">
             <span class="ci-icon">💬</span>
@@ -440,8 +449,7 @@
               <p>+57 312 687 9434 (Toca para escribir)</p>
             </div>
           </a>
-          <a href="https://instagram.com/beautystudio.salome" class="contacto-item instagram" target="_blank"
-            rel="noopener">
+          <a href="https://instagram.com/beautystudio.salome" class="contacto-item instagram" target="_blank" rel="noopener">
             <span class="ci-icon">📸</span>
             <div>
               <strong>Instagram</strong>
@@ -465,7 +473,7 @@
         </div>
       </div>
 
-      <!-- MAPA INTERACTIVO DE UBICACIÓN ROSADO Y DESTACADO -->
+      <!-- MAPA INTERACTIVO DE UBICACIÓN -->
       <div class="contacto-map-box">
         <div class="map-header">
           <h3>📍 Nuestra Ubicación</h3>
@@ -507,26 +515,45 @@
     <p class="footer-copy">© 2026 Beauty Studio by Salomé Osorio · Con 💖 para ti</p>
   </footer>
 
-  <!-- MODAL VISOR DE FOTOS INTERACTIVO -->
+  <!-- 📸 MODAL VISOR DE FOTOS GALERÍA INTERACTIVO MULTI-FOTO -->
   <div class="photo-modal" id="photoModal" aria-hidden="true">
     <div class="modal-overlay" id="modalOverlay"></div>
     <div class="modal-container">
       <button class="modal-close" id="modalClose" aria-label="Cerrar">&times;</button>
 
+      <div class="modal-header-bar">
+        <span class="photo-counter" id="photoCounter">Foto 1 de 1</span>
+      </div>
+
       <div class="modal-body">
+        <!-- Visualizador principal con flechas -->
         <div class="modal-slider">
-          <button class="slider-arrow prev-arrow" id="prevSlide" aria-label="Anterior">&#10094;</button>
+          <button class="slider-arrow prev-arrow" id="prevSlide" aria-label="Foto Anterior">&#10094;</button>
           <div class="slider-img-container">
-            <img id="modalImg" src="" alt="Demostración de efecto" />
+            <img id="modalImg" src="" alt="Demostración de servicio" />
           </div>
-          <button class="slider-arrow next-arrow" id="nextSlide" aria-label="Siguiente">&#10095;</button>
+          <button class="slider-arrow next-arrow" id="nextSlide" aria-label="Foto Siguiente">&#10095;</button>
         </div>
 
-        <div class="slider-dots" id="sliderDots"></div>
+        <!-- Tira de Miniaturas interactivas -->
+        <div class="modal-thumbnails" id="modalThumbnails"></div>
 
+        <!-- Información del servicio y agendamiento -->
         <div class="modal-info">
-          <h3 id="modalTitle">Efecto</h3>
-          <p id="modalDesc">Demostración visual del servicio</p>
+          <h3 id="modalTitle">Nombre del Servicio</h3>
+          <p id="modalDesc">Descripción completa de la técnica y beneficios.</p>
+          
+          <div class="modal-prices-box" id="modalPricesBox">
+            <div class="modal-price-item">
+              <span class="price-lbl">✨ Set Nuevo:</span>
+              <strong class="price-val" id="modalPriceMain">$70.000</strong>
+            </div>
+            <div class="modal-price-item retouch">
+              <span class="price-lbl">✂️ Retoque:</span>
+              <strong class="price-val" id="modalPriceRetouch">$45.000</strong>
+            </div>
+          </div>
+
           <a id="modalWaBtn" href="#" class="effect-btn modal-wa-btn" target="_blank" rel="noopener">
             Agendar este servicio por WhatsApp 💕
           </a>
@@ -535,20 +562,8 @@
     </div>
   </div>
 
+  <!-- JavaScript Principal -->
   <script src="script.js"></script>
-</body>
-
-</html>o</a>
-</div>
-<div class="footer-social">
-  <a href="https://instagram.com/beautystudio.salome" target="_blank" rel="noopener">📸 Instagram</a>
-  <a href="https://wa.me/573000000000" target="_blank" rel="noopener">💬 WhatsApp</a>
-</div>
-</div>
-<p class="footer-copy">© 2026 Beauty Studio by Salomé Osorio · Con 💖 para ti</p>
-</footer>
-
-<script src="script.js"></script>
 </body>
 
 </html>

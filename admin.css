@@ -1,0 +1,572 @@
+/* ==========================================
+   BEAUTY STUDIO BY SALOMÉ OSORIO
+   Panel Admin CSS
+   ========================================== */
+
+:root {
+  --pink-light: #fff0f5;
+  --pink-soft: #ffd6e7;
+  --pink-main: #f4a7c3;
+  --pink-dark: #c95b84;
+  --text-dark: #4a2040;
+  --text-mid: #7b4d6a;
+  --white: #ffffff;
+  --success: #2e7d32;
+  --danger: #d32f2f;
+  --radius-lg: 16px;
+  --shadow-card: 0 8px 24px rgba(192, 80, 130, 0.12);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #fdf6f9;
+  color: var(--text-dark);
+  min-height: 100vh;
+}
+
+/* 🔒 PIN MODAL */
+.pin-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(74, 32, 64, 0.85), rgba(201, 91, 132, 0.85));
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 99999;
+}
+
+.pin-card {
+  background: var(--white);
+  border-radius: 24px;
+  padding: 40px 32px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--pink-soft);
+}
+
+.pin-icon {
+  font-size: 3.5rem;
+  margin-bottom: 12px;
+}
+
+.pin-card h2 {
+  font-family: 'Playfair Display', serif;
+  color: var(--text-dark);
+  margin-bottom: 8px;
+  font-size: 1.8rem;
+}
+
+.pin-card p {
+  font-size: 0.9rem;
+  color: var(--text-mid);
+  margin-bottom: 24px;
+}
+
+.input-group {
+  margin-bottom: 20px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: 12px;
+  border: 2px solid var(--pink-soft);
+  font-size: 1rem;
+  text-align: center;
+  letter-spacing: 2px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.input-group input:focus {
+  border-color: var(--pink-dark);
+}
+
+.pin-hint {
+  margin-top: 16px;
+  font-size: 0.8rem;
+  color: var(--text-mid);
+}
+
+/* HEADER ADMIN */
+.admin-header {
+  background: linear-gradient(135deg, #4a2040 0%, #c95b84 100%);
+  color: var(--white);
+  padding: 20px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 20px rgba(74, 32, 64, 0.2);
+}
+
+.admin-brand h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  margin-bottom: 2px;
+}
+
+.admin-brand h1 span {
+  color: var(--pink-soft);
+  font-weight: 300;
+  font-style: italic;
+}
+
+.admin-brand p {
+  font-size: 0.82rem;
+  opacity: 0.85;
+}
+
+.admin-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.db-status-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.status-dot.green {
+  width: 9px;
+  height: 9px;
+  background: #4caf50;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #4caf50;
+}
+
+/* CONTAINER & LAYOUT */
+.admin-container {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 28px;
+  max-width: 1300px;
+  margin: 32px auto;
+  padding: 0 20px;
+}
+
+@media (max-width: 900px) {
+  .admin-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* SIDEBAR */
+.admin-sidebar {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 24px 20px;
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--pink-soft);
+  height: fit-content;
+}
+
+.sidebar-header h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  margin-bottom: 4px;
+}
+
+.sidebar-header p {
+  font-size: 0.8rem;
+  color: var(--text-mid);
+  margin-bottom: 16px;
+}
+
+.service-menu {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.menu-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  background: var(--pink-light);
+  border: 1px solid transparent;
+  transition: all 0.25s ease;
+}
+
+.menu-item:hover {
+  background: var(--pink-soft);
+}
+
+.menu-item.active {
+  background: linear-gradient(135deg, var(--pink-main), var(--pink-dark));
+  color: var(--white);
+  font-weight: 600;
+}
+
+.menu-item-info strong {
+  display: block;
+  font-size: 0.88rem;
+}
+
+.menu-category {
+  font-size: 0.72rem;
+  opacity: 0.8;
+  text-transform: uppercase;
+}
+
+.photo-badge {
+  font-size: 0.75rem;
+  background: rgba(255, 255, 255, 0.4);
+  padding: 3px 8px;
+  border-radius: 10px;
+}
+
+/* EDITOR CONTENT */
+.admin-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.service-editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--white);
+  padding: 20px 24px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--pink-soft);
+}
+
+.category-pill {
+  font-size: 0.72rem;
+  background: var(--pink-soft);
+  color: var(--pink-dark);
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.service-editor-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.7rem;
+  margin: 4px 0 2px;
+}
+
+.service-id-tag {
+  font-size: 0.8rem;
+  color: var(--text-mid);
+}
+
+.admin-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 26px 24px;
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--pink-soft);
+}
+
+.card-title-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-title-bar h3,
+.admin-card h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  color: var(--text-dark);
+}
+
+.card-subtitle {
+  font-size: 0.86rem;
+  color: var(--text-mid);
+  margin-bottom: 20px;
+}
+
+.photo-count-badge {
+  background: #fce4ec;
+  color: var(--pink-dark);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+/* DROPZONE */
+.upload-dropzone {
+  border: 2.5px dashed var(--pink-main);
+  background: var(--pink-light);
+  border-radius: 16px;
+  padding: 30px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 24px;
+}
+
+.upload-dropzone:hover,
+.upload-dropzone.dragover {
+  background: #fce4ec;
+  border-color: var(--pink-dark);
+  transform: scale(1.01);
+}
+
+.upload-icon {
+  font-size: 2.5rem;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.click-link {
+  color: var(--pink-dark);
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.upload-info {
+  font-size: 0.78rem;
+  color: var(--text-mid);
+  display: block;
+  margin-top: 6px;
+}
+
+/* PHOTOS GRID */
+.photos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 18px;
+}
+
+.admin-photo-card {
+  background: #fafafa;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 2px solid #eee;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-photo-card.is-cover {
+  border-color: var(--pink-dark);
+  box-shadow: 0 6px 20px rgba(201, 91, 132, 0.25);
+}
+
+.photo-preview {
+  position: relative;
+  width: 100%;
+  height: 150px;
+  overflow: hidden;
+  background: #000;
+}
+
+.photo-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cover-tag {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: var(--pink-dark);
+  color: var(--white);
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 8px;
+}
+
+.photo-actions {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+  background: #fff;
+  flex-grow: 1;
+  justify-content: center;
+}
+
+.cover-active-lbl {
+  font-size: 0.78rem;
+  color: var(--pink-dark);
+  font-weight: 700;
+}
+
+/* FORMS */
+.details-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 16px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+@media (max-width: 600px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.form-group input,
+.form-group textarea {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1.5px solid var(--pink-soft);
+  font-family: inherit;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: var(--pink-dark);
+}
+
+/* BUTTONS */
+.admin-btn {
+  padding: 10px 20px;
+  border-radius: 50px;
+  border: none;
+  font-family: inherit;
+  font-size: 0.86rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.admin-btn.primary,
+.admin-btn.save {
+  background: linear-gradient(135deg, var(--pink-main), var(--pink-dark));
+  color: var(--white);
+  box-shadow: 0 4px 15px rgba(201, 91, 132, 0.3);
+}
+
+.admin-btn.primary:hover,
+.admin-btn.save:hover {
+  background: linear-gradient(135deg, var(--pink-dark), #a43a63);
+  transform: translateY(-2px);
+}
+
+.admin-btn.cover-btn {
+  background: var(--pink-light);
+  color: var(--pink-dark);
+  border: 1px solid var(--pink-soft);
+  font-size: 0.75rem;
+  width: 100%;
+  padding: 6px 10px;
+}
+
+.admin-btn.cover-btn:hover {
+  background: var(--pink-soft);
+}
+
+.admin-btn.delete-btn {
+  background: #ffebee;
+  color: var(--danger);
+  font-size: 0.85rem;
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+
+.admin-btn.outline {
+  background: transparent;
+  color: var(--white);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.admin-btn.outline-sm {
+  background: transparent;
+  color: var(--pink-dark);
+  border: 1px solid var(--pink-soft);
+  font-size: 0.78rem;
+  padding: 6px 14px;
+}
+
+.admin-btn.danger-sm {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--white);
+  font-size: 0.78rem;
+  padding: 6px 14px;
+}
+
+/* SQL CODE BOX */
+.sql-box pre {
+  background: #282a36;
+  color: #f8f8f2;
+  padding: 16px;
+  border-radius: 12px;
+  font-size: 0.78rem;
+  max-height: 200px;
+  overflow-y: auto;
+  line-height: 1.5;
+}
+
+/* TOAST ADMIN */
+.admin-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: linear-gradient(135deg, #4a2040, #c95b84);
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+  z-index: 99999;
+}
+
+.admin-toast.visible {
+  opacity: 1;
+  transform: translateY(0);
+}

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel Admin · Beauty Studio by Salomé Osorio</title>
+  
+  <!-- Fuentes Google -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  
+  <!-- CSS Admin -->
+  <link rel="stylesheet" href="admin.css" />
+
+  <!-- Supabase JS Client CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+</head>
+
+<body>
+
+  <!-- 🔒 MODAL DE AUTENTICACIÓN POR PIN -->
+  <div class="pin-modal-overlay" id="pinModalOverlay">
+    <div class="pin-card">
+      <div class="pin-icon">🌸</div>
+      <h2>Panel Admin Salomé</h2>
+      <p>Ingresa tu clave PIN para administrar tus fotos y servicios:</p>
+      
+      <form id="pinForm">
+        <div class="input-group">
+          <input type="password" id="pinInput" placeholder="Clave PIN (ej: salo2026)" required autofocus autocomplete="current-password" />
+        </div>
+        <button type="submit" class="admin-btn primary">Ingresar al Admin 💖</button>
+      </form>
+      <div class="pin-hint">Clave por defecto: <strong>salo2026</strong></div>
+    </div>
+  </div>
+
+  <!-- 🌸 CONTENIDO PRINCIPAL DEL ADMIN -->
+  <div class="admin-app" id="adminApp" style="display: none;">
+
+    <!-- BARRA SUPERIOR HEADER -->
+    <header class="admin-header">
+      <div class="admin-brand">
+        <h1>Beauty Studio <span>Admin</span></h1>
+        <p>by Salomé Osorio · Gestión de Fotos & Servicios</p>
+      </div>
+
+      <div class="admin-header-actions">
+        <div class="db-status-badge" id="dbStatusBadge">
+          <span class="status-dot green"></span>
+          <span id="dbStatusText">Sincronizado</span>
+        </div>
+        <a href="index.html" class="admin-btn outline" target="_blank">🌐 Ver Web Principal</a>
+        <button class="admin-btn danger-sm" id="logoutBtn">🔒 Salir</button>
+      </div>
+    </header>
+
+    <!-- CONTAINER PRINCIPAL -->
+    <main class="admin-container">
+      
+      <!-- LATERAL: SELECCIÓN DE SERVICIO Y NAVEGACIÓN -->
+      <aside class="admin-sidebar">
+        <div class="sidebar-header">
+          <h3>Efectos y Servicios</h3>
+          <p>Selecciona un servicio para editar sus fotos y precios:</p>
+        </div>
+
+        <ul class="service-menu" id="serviceMenuList">
+          <!-- Se llena dinámicamente -->
+        </ul>
+      </aside>
+
+      <!-- ÁREA DE EDICIÓN PRINCIPAL -->
+      <section class="admin-content">
+        
+        <!-- HEADER DEL SERVICIO SELECCIONADO -->
+        <div class="service-editor-header">
+          <div>
+            <span class="category-pill" id="activeCategoryPill">Pestañas</span>
+            <h2 id="activeServiceTitle">Efecto Natural</h2>
+            <p class="service-id-tag">ID: <code id="activeServiceId">efecto-natural</code></p>
+          </div>
+          <button class="admin-btn save" id="saveServiceBtn">💾 Guardar Cambios</button>
+        </div>
+
+        <!-- SECCIÓN 1: GESTOR DE FOTOS & PORTADA -->
+        <div class="admin-card">
+          <div class="card-title-bar">
+            <h3>📸 Fotos del Servicio / Efecto</h3>
+            <span class="photo-count-badge" id="activePhotoCount">2 fotos subidas</span>
+          </div>
+          <p class="card-subtitle">Sube fotos demostrativas. Haz clic en <strong>"⭐ Definir Portada"</strong> para elegir qué foto se verá como portada principal.</p>
+
+          <!-- UPLOAD BOX -->
+          <div class="upload-dropzone" id="uploadDropzone">
+            <input type="file" id="photoFileInput" accept="image/*" multiple style="display: none;" />
+            <div class="dropzone-content">
+              <span class="upload-icon">📤</span>
+              <p><strong>Arrastra imágenes aquí</strong> o <span class="click-link">haz clic para explorar</span></p>
+              <span class="upload-info">JPG, PNG o WEBP (puedes subir varias a la vez)</span>
+            </div>
+          </div>
+
+          <!-- REJILLA DE FOTOS SUBIDAS -->
+          <div class="photos-grid" id="photosGrid">
+            <!-- Se llena dinámicamente -->
+          </div>
+        </div>
+
+        <!-- SECCIÓN 2: EDICIÓN DE PRECIOS Y DETALLES -->
+        <div class="admin-card">
+          <h3>✏️ Detalles y Precios</h3>
+          
+          <form id="serviceDetailsForm" class="details-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="editTitle">Nombre del Servicio:</label>
+                <input type="text" id="editTitle" required />
+              </div>
+              <div class="form-group">
+                <label for="editBadge">Etiqueta Badge (ej: 🌸 Sutil & Delicado):</label>
+                <input type="text" id="editBadge" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="editDescription">Descripción breve:</label>
+              <textarea id="editDescription" rows="3" required></textarea>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="editPriceMain">Precio Montaje (Set Nuevo):</label>
+                <input type="text" id="editPriceMain" placeholder="$70.000" />
+              </div>
+              <div class="form-group">
+                <label for="editPriceRetouch">Precio de Retoque:</label>
+                <input type="text" id="editPriceRetouch" placeholder="$45.000" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="editWaLink">Link de WhatsApp Agendamiento:</label>
+              <input type="url" id="editWaLink" required />
+            </div>
+          </form>
+        </div>
+
+        <!-- SECCIÓN 3: INSTALADOR SUPABASE SQL -->
+        <div class="admin-card sql-box">
+          <div class="card-title-bar">
+            <h3>⚡ Configuración de Tablas en Supabase</h3>
+            <button class="admin-btn outline-sm" id="copySqlBtn">📋 Copiar Script SQL</button>
+          </div>
+          <p class="card-subtitle">Tu proyecto de Supabase (<code>dtjgjehnabkiqrhyekpe</code>) está configurado. Si deseas sincronizar la base de datos en la nube, abre tu Dashboard de Supabase -> SQL Editor y pega este código de 1 clic:</p>
+          <pre><code id="sqlCodePreview"></code></pre>
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- JavaScript Admin -->
+  <script src="admin.js"></script>
+</body>
+
+</html>
