@@ -269,6 +269,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     showAdminToast('¡Nuevas fotos agregadas con éxito! 📸💕');
   };
 
+  // Guardar fotos button
+  const savePhotosBtn = document.getElementById('savePhotosBtn');
+  if (savePhotosBtn) {
+    savePhotosBtn.addEventListener('click', async () => {
+      const service = services.find(s => s.id === currentServiceId);
+      if (!service) return;
+      await saveServiceData(service);
+      renderSidebarMenu();
+      renderPhotosGrid(service);
+      activePhotoCount.textContent = `${service.photos ? service.photos.length : 0} fotos subidas`;
+      showAdminToast('📸 Fotos guardadas con éxito!');
+    });
+  }
+
   // ───────────────────────────
   // 4. Guardar Detalles de Formulario
   // ───────────────────────────

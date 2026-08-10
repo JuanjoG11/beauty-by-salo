@@ -27,7 +27,7 @@ body {
   font-family: 'Poppins', sans-serif;
   background: #fdf6f9;
   color: var(--text-dark);
-  min-height: 100vh;
+  overflow-x: hidden;
 }
 
 /* 🔒 PIN MODAL */
@@ -355,9 +355,17 @@ body {
 
 /* PHOTOS GRID */
 .photos-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 18px;
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  gap: 8px;
+  padding-bottom: 8px;
+}
+
+.admin-photo-card {
+  flex: 0 0 auto;
+  min-width: 150px;
 }
 
 .admin-photo-card {
@@ -679,12 +687,17 @@ body {
   }
 
   .photos-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    grid-template-columns: 1fr;
+    gap: 8px;
   }
 
   .admin-photo-card .photo-preview {
-    height: 105px;
+    height: 80px;
+  }
+
+  .admin-btn {
+    width: 100%;
+    justify-content: center;
   }
 
   .admin-toast {
