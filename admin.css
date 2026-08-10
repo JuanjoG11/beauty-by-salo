@@ -163,6 +163,8 @@ body {
 
 @media (max-width: 900px) {
   .admin-container {
+    max-height: 100vh;
+    overflow-y: auto;
     grid-template-columns: 1fr;
   }
 }
@@ -597,19 +599,23 @@ body {
     gap: 16px;
   }
 
+  .admin-app {
+    height: calc(100vh - 70px);
+    overflow-y: auto;
+  }
   .admin-sidebar {
-    max-height: calc(100vh - 150px);
+    width: 100%;
+    height: calc(100vh - 120px);
     overflow-y: auto;
     padding: 16px 14px;
   }
 
   /* Menú de servicios horizontal tipo scroll en móviles */
   .service-menu {
-    flex-direction: row;
-    overflow-x: auto;
+    flex-direction: column;
+    overflow-y: auto;
+    max-height: calc(100vh - 250px);
     padding-bottom: 8px;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
   }
 
   .service-menu::-webkit-scrollbar {

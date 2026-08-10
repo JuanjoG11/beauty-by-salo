@@ -57,10 +57,6 @@ const DEFAULT_SERVICES = [
   },
   {
     id: 'tecnorimel',
-    title: 'Tecnorimel',
-    category: 'pestañas',
-  {
-    id: 'tecnorimel',
     title: 'Efecto Tecno Rimel / Aura',
     category: 'pestañas',
     badge: '💎 Tecno Rimel / Aura',
@@ -68,13 +64,6 @@ const DEFAULT_SERVICES = [
     price_main: '$85.000',
     price_retouch: '$50.000',
     wa_link: 'https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20el%20*Tecno%20Rimel%20Aura*.',
-    cover_url: 'img/tecnorimel.jpg',
-    photos: ['img/tecnorimel.jpg']
-  },
-    description: 'Efecto tecnológico con acabado brillante y de larga duración.',
-    price_main: '$85.000',
-    price_retouch: '$50.000',
-    wa_link: 'https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20el%20*Tecnorimel*.',
     cover_url: 'img/tecnorimel.jpg',
     photos: ['img/tecnorimel.jpg']
   },
