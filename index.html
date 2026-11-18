@@ -58,6 +58,7 @@
         </h1>
         <p class="brand-slogan">Porque mereces brillar cada día 💖</p>
         <a href="#servicios" class="cta-btn">Ver mis servicios</a>
+        <a href="agenda.html" class="cta-btn cta-agenda">🎄 Agenda tu cita navideña</a>
       </div>
     </div>
 
@@ -590,8 +591,31 @@
     </div>
   </div>
 
+  <!-- BANNER AGENDA NAVIDEÑA FLOTANTE -->
+  <div class="xmas-floating-banner" id="xmasFloatingBanner">
+    <a href="agenda.html" class="xmas-banner-link">
+      <span class="xmas-banner-icon">🎄</span>
+      <span class="xmas-banner-text">¡Agenda tu cita navideña!</span>
+      <span class="xmas-banner-cta">Reservar →</span>
+    </a>
+    <button class="xmas-banner-close" id="xmasBannerClose" aria-label="Cerrar">×</button>
+  </div>
+
   <!-- JavaScript Principal -->
   <script src="script.js"></script>
+  <script>
+    // Banner navideño flotante
+    const banner = document.getElementById('xmasFloatingBanner');
+    const closeBtn = document.getElementById('xmasBannerClose');
+    if (closeBtn && banner) {
+      closeBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        banner.style.transform = 'translateY(100px)';
+        banner.style.opacity = '0';
+        setTimeout(() => banner.style.display = 'none', 400);
+      });
+    }
+  </script>
 </body>
 
 </html>

@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agenda tu Cita · Beauty Studio by Salomé Osorio</title>
+  <meta name="description" content="Agenda tu cita navideña con Salomé Osorio. Pestañas, faciales, hidralips y más." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="agenda.css" />
+</head>
+
+<body>
+
+  <!-- Copos sutiles de fondo -->
+  <div class="snow-container" id="snowContainer" aria-hidden="true"></div>
+
+  <!-- ===== HERO ===== -->
+  <header class="xmas-hero">
+    <div class="xmas-hero-content">
+
+      <!-- Avatar de Salomé -->
+      <div class="hero-avatar-col">
+        <div class="hero-avatar-wrap">
+          <img src="avatar navidad.png" alt="Salomé Osorio · Lashista y Cosmetóloga"
+               class="hero-avatar-img" id="heroAvatarImg"
+               onerror="this.style.display='none'" />
+          <div class="hero-avatar-glow"></div>
+        </div>
+      </div>
+
+      <!-- Textos -->
+      <div class="hero-text-col">
+        <div class="xmas-badge">Agenda Navideña 2026</div>
+        <h1 class="xmas-title">
+          <span class="title-beauty">Beauty Studio</span>
+          <span class="title-by">by</span>
+          <span class="title-salome">Salomé Osorio</span>
+        </h1>
+        <p class="xmas-sub">
+          Escoge tu servicio, fecha y hora favorita.<br>
+          Confirma por WhatsApp y separa tu cita con el abono.
+        </p>
+        <div class="xmas-stats">
+          <span class="stat-pill">Lashista certificada</span>
+          <span class="stat-pill">Horarios limitados</span>
+          <span class="stat-pill">Confirmación por WhatsApp</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="xmas-hero-wave">
+      <svg viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0,30 C480,65 960,0 1440,35 L1440,60 L0,60 Z" fill="#fff5f9" />
+      </svg>
+    </div>
+  </header>
+
+  <!-- ===== FLUJO DE AGENDAMIENTO ===== -->
+  <main class="booking-main" id="bookingMain">
+
+    <!-- INDICADOR DE PASOS -->
+    <div class="steps-bar">
+      <div class="step active" id="step-dot-1">
+        <div class="step-circle">1</div>
+        <span>Servicio</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step" id="step-dot-2">
+        <div class="step-circle">2</div>
+        <span>Fecha</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step" id="step-dot-3">
+        <div class="step-circle">3</div>
+        <span>Hora</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step" id="step-dot-4">
+        <div class="step-circle">4</div>
+        <span>Confirmar</span>
+      </div>
+    </div>
+
+    <!-- ======= PASO 1: SERVICIO ======= -->
+    <section class="booking-step active" id="step1">
+      <div class="step-header">
+        <h2>Elige tu servicio</h2>
+        <p>Selecciona el servicio que deseas reservar.</p>
+      </div>
+
+      <div class="services-selector" id="servicesSelectorGrid"></div>
+
+      <div class="step-nav">
+        <button class="btn-next" id="toStep2Btn" disabled>
+          Elegir fecha <span class="btn-arrow">›</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ======= PASO 2: FECHA ======= -->
+    <section class="booking-step" id="step2">
+      <div class="step-header">
+        <h2>Elige tu fecha</h2>
+        <p>Solo aparecen los días con horarios disponibles.</p>
+      </div>
+
+      <div class="calendar-scroll" id="calendarScroll"></div>
+
+      <div class="step-nav">
+        <button class="btn-back" id="backTo1Btn">‹ Volver</button>
+        <button class="btn-next" id="toStep3Btn" disabled>
+          Elegir hora <span class="btn-arrow">›</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ======= PASO 3: HORA ======= -->
+    <section class="booking-step" id="step3">
+      <div class="step-header">
+        <h2>Elige tu hora</h2>
+        <p id="step3DateLabel"></p>
+      </div>
+
+      <div class="time-legend">
+        <span class="legend-item"><span class="legend-dot available"></span> Disponible</span>
+        <span class="legend-item"><span class="legend-dot selected"></span> Tu elección</span>
+        <span class="legend-item"><span class="legend-dot taken"></span> Reservado</span>
+      </div>
+
+      <div class="times-grid" id="timesGrid"></div>
+
+      <p class="time-disclaimer">Los horarios están sujetos a confirmación por WhatsApp una vez realizado el abono.</p>
+
+      <div class="step-nav">
+        <button class="btn-back" id="backTo2Btn">‹ Volver</button>
+        <button class="btn-next" id="toStep4Btn" disabled>
+          Ver resumen <span class="btn-arrow">›</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ======= PASO 4: CONFIRMAR ======= -->
+    <section class="booking-step" id="step4">
+      <div class="step-header">
+        <h2>Confirma tu cita</h2>
+        <p>Revisa los detalles y completa tu nombre.</p>
+      </div>
+
+      <!-- RESUMEN -->
+      <div class="booking-summary" id="bookingSummary">
+        <div class="summary-row">
+          <span class="summary-icon">✦</span>
+          <div>
+            <span class="summary-label">Servicio</span>
+            <strong id="sum-service">—</strong>
+          </div>
+        </div>
+        <div class="summary-row">
+          <span class="summary-icon">✦</span>
+          <div>
+            <span class="summary-label">Fecha</span>
+            <strong id="sum-date">—</strong>
+          </div>
+        </div>
+        <div class="summary-row">
+          <span class="summary-icon">✦</span>
+          <div>
+            <span class="summary-label">Hora</span>
+            <strong id="sum-time">—</strong>
+          </div>
+        </div>
+        <div class="summary-row">
+          <span class="summary-icon">✦</span>
+          <div>
+            <span class="summary-label">Precio del servicio</span>
+            <strong id="sum-price">—</strong>
+          </div>
+        </div>
+        <div class="summary-row abono-row">
+          <span class="summary-icon">✦</span>
+          <div>
+            <span class="summary-label">Abono requerido (50%)</span>
+            <strong id="sum-abono" class="abono-amount">—</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- CUENTAS DE PAGO -->
+      <div class="payment-box">
+        <div class="payment-header">
+          <div class="payment-header-left">
+            <span class="payment-sparkle">✦</span>
+            <div>
+              <h3>Realiza tu abono aquí</h3>
+              <p>A nombre de <strong>Salomé Osorio</strong></p>
+            </div>
+          </div>
+          <div class="payment-amount-pill" id="paymentAmountPill">50%</div>
+        </div>
+
+        <div class="payment-methods">
+
+          <div class="payment-method nequi">
+            <div class="pm-logo-wrap">
+              <span class="pm-logo-icon">N</span>
+            </div>
+            <div class="pm-info">
+              <span class="pm-name">Nequi</span>
+              <span class="pm-number">312 687 9434</span>
+            </div>
+            <button class="pm-copy-btn" data-copy="3126879434" title="Copiar número">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            </button>
+          </div>
+
+          <div class="payment-method llaves">
+            <div class="pm-logo-wrap">
+              <span class="pm-logo-icon">🔑</span>
+            </div>
+            <div class="pm-info">
+              <span class="pm-name">Llaves</span>
+              <span class="pm-number">312 687 9434 · 1137059728</span>
+            </div>
+            <button class="pm-copy-btn" data-copy="3126879434" title="Copiar número">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            </button>
+          </div>
+
+          <div class="payment-method daviplata">
+            <div class="pm-logo-wrap">
+              <span class="pm-logo-icon">D</span>
+            </div>
+            <div class="pm-info">
+              <span class="pm-name">Daviplata</span>
+              <span class="pm-number">312 687 9434</span>
+            </div>
+            <button class="pm-copy-btn" data-copy="3126879434" title="Copiar número">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            </button>
+          </div>
+
+        </div>
+
+        <div class="payment-capture-hint">
+          <div class="capture-icon">📎</div>
+          <p>Al confirmar por WhatsApp, adjunta la <strong>captura de tu transferencia</strong> para validar tu cita más rápido.</p>
+        </div>
+      </div>
+
+      <!-- POLÍTICAS -->
+      <div class="abono-policy-box">        <div class="policy-header">
+          <span class="policy-icon">🌸</span>
+          <h3>Nuestras políticas</h3>
+        </div>
+        <div class="policy-items">
+          <div class="policy-item">
+            <span class="policy-emoji">·</span>
+            <div>
+              <strong>Anticipo del 50%</strong>
+              <p>Para separar tu cita realiza un abono del 50% del servicio. Tu cita se confirma únicamente por WhatsApp una vez recibamos tu pago.</p>
+            </div>
+          </div>
+          <div class="policy-item">
+            <span class="policy-emoji">·</span>
+            <div>
+              <strong>Puntualidad</strong>
+              <p>Te recomendamos llegar 5 minutos antes. Contamos con tiempos establecidos para garantizarte una atención de calidad.</p>
+            </div>
+          </div>
+          <div class="policy-item">
+            <span class="policy-emoji">·</span>
+            <div>
+              <strong>Cancelaciones y cambios</strong>
+              <p>Si necesitas cancelar o modificar tu cita, avísanos con al menos 24 horas de anticipación. No se hacen devoluciones de abonos.</p>
+            </div>
+          </div>
+          <div class="policy-item">
+            <span class="policy-emoji">·</span>
+            <div>
+              <strong>Acompañantes</strong>
+              <p>Para mantener un ambiente cómodo, agradecemos que asistas sin acompañantes, salvo situaciones previamente autorizadas.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DATOS -->
+      <div class="booking-form-box">
+        <h3>Tus datos</h3>
+        <div class="form-field">
+          <label for="clientName">Nombre completo</label>
+          <input type="text" id="clientName" placeholder="Ej: María Paz García" autocomplete="name" />
+        </div>
+        <div class="form-field">
+          <label for="clientNote">Nota adicional (opcional)</label>
+          <input type="text" id="clientNote" placeholder="Algún detalle especial para tu cita..." />
+        </div>
+      </div>
+
+      <div class="step-nav confirm-nav">
+        <button class="btn-back" id="backTo3Btn">‹ Volver</button>
+        <button class="btn-confirm" id="confirmBookingBtn">
+          Confirmar por WhatsApp
+        </button>
+      </div>
+
+      <p class="wa-disclaimer">Al tocar el botón serás redirigida a WhatsApp con los datos de tu cita listos para enviar. 💕</p>
+    </section>
+
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="xmas-footer">
+    <div class="footer-deco">· · ·</div>
+    <p class="footer-name">Beauty Studio by Salomé Osorio</p>
+    <p class="footer-tagline">Gracias por confiar en mi trabajo 💕</p>
+    <div class="footer-links-row">
+      <a href="index.html">Ver catálogo</a>
+      <a href="https://wa.me/573126879434" target="_blank">WhatsApp</a>
+      <a href="agenda-admin.html">Admin</a>
+    </div>
+  </footer>
+
+  <script src="agenda-data.js"></script>
+  <script src="agenda.js"></script>
+</body>
+
+</html>
