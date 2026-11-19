@@ -40,7 +40,7 @@
           <div class="bubble-tail"></div>
         </div>
         <div class="avatar-container">
-          <img src="avatar.png" alt="Salomé - Lashista y Cosmetóloga" class="avatar-img" id="avatarImg" />
+          <img src="avatar navidad.png" alt="Salomé - Lashista y Cosmetóloga" class="avatar-img" id="avatarImg" />
           <div class="avatar-placeholder" id="avatarPlaceholder">
             <span>🌸</span>
           </div>
@@ -50,6 +50,11 @@
 
       <!-- Nombre del negocio -->
       <div class="brand">
+        <!-- Logo oficial -->
+        <div class="brand-logo-wrap">
+          <img src="img/logo.png" alt="Salomé Osorio · Cosmetóloga, Esteticista, Lashista"
+               class="brand-logo-img" onerror="this.style.display='none'" />
+        </div>
         <p class="brand-tag">✨ Belleza & Cuidado Personal ✨</p>
         <h1 class="brand-name">
           <span class="brand-beauty">Beauty Studio</span><br>
@@ -57,8 +62,10 @@
           <span class="brand-salome">Salomé Osorio</span>
         </h1>
         <p class="brand-slogan">Porque mereces brillar cada día 💖</p>
-        <a href="#servicios" class="cta-btn">Ver mis servicios</a>
-        <a href="agenda.html" class="cta-btn cta-agenda">🎄 Agenda tu cita navideña</a>
+        <div class="hero-cta-group">
+          <a href="#servicios" class="cta-btn">Ver mis servicios</a>
+          <a href="agenda.html" class="cta-btn cta-agenda">🎄 Agenda tu cita navideña</a>
+        </div>
       </div>
     </div>
 
@@ -460,6 +467,50 @@
     </div>
   </section>
 
+  <!-- ✨ PROMOS -->
+  <section class="promos" id="promos">
+    <div class="section-title" data-aos="fade-up">
+      <p class="section-tag">Ofertas especiales</p>
+      <h2>Promos Navideñas 🎄</h2>
+      <div class="divider">🌸 ─── 🌸 ─── 🌸</div>
+    </div>
+    <div class="promos-grid" id="promosGrid">
+      <div class="promo-card" data-aos="fade-up">
+        <div class="promo-badge">🎁 Navidad 2026</div>
+        <h3>Paquete Mirada + Labios</h3>
+        <p>Montaje de pestañas + Hidralips (1 sesión)</p>
+        <div class="promo-price">
+          <span class="promo-before">$125.000</span>
+          <span class="promo-now">$110.000</span>
+        </div>
+        <a href="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Quiero%20el%20*Paquete%20Mirada%20%2B%20Labios*%20navide%C3%B1o%20%F0%9F%8E%84"
+           class="promo-btn" target="_blank" rel="noopener">Quiero esta promo 💕</a>
+      </div>
+      <div class="promo-card" data-aos="fade-up" data-aos-delay="100">
+        <div class="promo-badge">✨ Diciembre</div>
+        <h3>Facial Completo</h3>
+        <p>Limpieza facial + Hidratación en la misma sesión</p>
+        <div class="promo-price">
+          <span class="promo-before">$125.000</span>
+          <span class="promo-now">$105.000</span>
+        </div>
+        <a href="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Quiero%20el%20*Paquete%20Facial%20Completo*%20navide%C3%B1o%20%F0%9F%8E%84"
+           class="promo-btn" target="_blank" rel="noopener">Quiero esta promo 💕</a>
+      </div>
+      <div class="promo-card promo-highlight" data-aos="fade-up" data-aos-delay="200">
+        <div class="promo-badge">🌟 Más pedido</div>
+        <h3>Whispy Navideño</h3>
+        <p>Efecto Whispy + Color o Apliques incluidos</p>
+        <div class="promo-price">
+          <span class="promo-before">$117.000</span>
+          <span class="promo-now">$110.000</span>
+        </div>
+        <a href="https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Quiero%20el%20*Whispy%20Navide%C3%B1o*%20%F0%9F%8E%84"
+           class="promo-btn" target="_blank" rel="noopener">Quiero esta promo 💕</a>
+      </div>
+    </div>
+  </section>
+
   <!-- ✨ CONTACTO Y UBICACIÓN -->
   <section class="contacto" id="contacto">
     <div class="section-title">
@@ -534,6 +585,7 @@
       </div>
       <div class="footer-links">
         <a href="#servicios">Servicios</a>
+        <a href="#promos">Promos</a>
         <a href="#contacto">Contacto</a>
       </div>
       <div class="footer-social">

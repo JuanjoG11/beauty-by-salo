@@ -1531,6 +1531,143 @@ section {
 }
 
 /* ===========================
+   LOGO OFICIAL
+   =========================== */
+.brand-logo-wrap {
+  margin-bottom: 14px;
+}
+
+.brand-logo-img {
+  max-width: 300px;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 2px 12px rgba(201,91,132,0.2));
+}
+
+/* GRUPO BOTONES HERO */
+.hero-cta-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-top: 4px;
+}
+
+/* ===========================
+   PROMOS NAVIDEÑAS
+   =========================== */
+.promos {
+  background: linear-gradient(160deg, #fff5f9 0%, #ffe8f2 100%);
+  padding: 80px 20px;
+}
+
+.promos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.promo-card {
+  background: var(--white);
+  border: 1.5px solid var(--pink-soft);
+  border-radius: var(--radius-lg);
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: var(--shadow-card);
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.promo-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--pink-main), var(--pink-dark));
+}
+
+.promo-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 40px rgba(201,91,132,0.2);
+}
+
+.promo-highlight::before {
+  background: linear-gradient(90deg, #f4a7c3, #c95b84, #f2c078);
+}
+
+.promo-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--pink-main), var(--pink-dark));
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+  letter-spacing: 0.3px;
+  align-self: flex-start;
+}
+
+.promo-card h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.promo-card p {
+  font-size: 0.84rem;
+  color: var(--text-mid);
+  line-height: 1.55;
+  margin: 0;
+  flex: 1;
+}
+
+.promo-price {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.promo-before {
+  font-size: 0.88rem;
+  color: var(--text-light);
+  text-decoration: line-through;
+}
+
+.promo-now {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--pink-dark);
+}
+
+.promo-btn {
+  display: block;
+  text-align: center;
+  background: linear-gradient(135deg, var(--pink-main), var(--pink-dark));
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 12px 20px;
+  border-radius: 50px;
+  text-decoration: none;
+  box-shadow: 0 4px 16px rgba(201,91,132,0.28);
+  transition: var(--transition);
+  margin-top: 4px;
+}
+
+.promo-btn:hover {
+  background: linear-gradient(135deg, var(--pink-dark), #a43a63);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(201,91,132,0.42);
+  color: #fff;
+}
+
+/* ===========================
    AGENDA — CTA HERO
    =========================== */
 .cta-agenda {

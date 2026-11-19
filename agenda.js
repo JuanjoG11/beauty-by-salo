@@ -116,13 +116,24 @@ document.addEventListener('DOMContentLoaded', () => {
       services.forEach(svc => {
         const card = document.createElement('button');
         card.type = 'button';
-        card.className = 'service-pick-card';
+        const isPromo = svc.category.includes('Promo');
+        card.className = `service-pick-card${isPromo ? ' promo-pick-card' : ''}`;
         card.dataset.id = svc.id;
-        card.innerHTML = `
-          <span class="svc-dot"></span>
-          <span class="svc-name">${svc.name}</span>
-          <span class="svc-price">${formatPrice(svc.price)}</span>
-        `;
+
+        if (isPromo) {
+          card.innerHTML = `
+            <span class="svc-promo-badge">🎁 Promo navideña</span>
+            <span class="svc-name">${svc.name}</span>
+            <span class="svc-tag">${svc.tag}</span>
+            <span class="svc-price">${formatPrice(svc.price)}</span>
+          `;
+        } else {
+          card.innerHTML = `
+            <span class="svc-dot"></span>
+            <span class="svc-name">${svc.name}</span>
+            <span class="svc-price">${formatPrice(svc.price)}</span>
+          `;
+        }
 
         card.addEventListener('click', () => {
           document.querySelectorAll('.service-pick-card').forEach(c => c.classList.remove('selected'));
@@ -344,22 +355,23 @@ document.addEventListener('DOMContentLoaded', () => {
       const abono = calcAbono(svc.price);
       const note = noteEl ? noteEl.value.trim() : '';
 
-      // Construir mensaje de WhatsApp
+      // Construir mensaje de WhatsApp con emojis de texto
       const msgLines = [
-        `¡Hola Salomé! 💕 Quiero agendar mi cita navideña 2026`,
+        `¡Hola Salomé! 💕 Quiero agendar mi cita navideña 2026 🎄`,
         ``,
-        `👤 Nombre: ${name}`,
-        `💅 Servicio: ${svc.name}`,
-        `📅 Fecha: ${formatDateDisplay(state.selectedDate)}`,
-        `⏰ Hora: ${state.selectedTime}`,
-        `💰 Precio: ${formatPrice(svc.price)}`,
-        `💳 Abono (50%): ${formatPrice(abono)}`,
+        `👤 *Nombre:* ${name}`,
+        `💅 *Servicio:* ${svc.name}`,
+        `📅 *Fecha:* ${formatDateDisplay(state.selectedDate)}`,
+        `⏰ *Hora:* ${state.selectedTime}`,
+        `💰 *Precio:* ${formatPrice(svc.price)}`,
+        `💳 *Abono (50%):* ${formatPrice(abono)}`,
       ];
 
-      if (note) msgLines.push(`📝 Nota: ${note}`);
+      if (note) msgLines.push(`📝 *Nota:* ${note}`);
 
       msgLines.push(``);
       msgLines.push(`Entiendo que mi cita se confirma únicamente por WhatsApp, después de realizar el abono del 50% (${formatPrice(abono)}) 💖`);
+      msgLines.push(`Adjunto captura de la transferencia 🩷`);
 
       const waMsg = encodeURIComponent(msgLines.join('\n'));
       const waUrl = `https://wa.me/${WA_NUMBER}?text=${waMsg}`;

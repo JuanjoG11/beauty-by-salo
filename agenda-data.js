@@ -11,6 +11,32 @@ const WA_NUMBER = '573126879434';
 // SERVICIOS DISPONIBLES PARA AGENDAR
 // ──────────────────────────────────────────
 const BOOKING_SERVICES = [
+  // ── PROMOS NAVIDEÑAS (aparecen primero) ──
+  {
+    id: 'promo-mirada-labios',
+    name: 'Mirada + Labios',
+    category: '🎁 Promos Navideñas',
+    price: 110000,
+    originalPrice: 125000,
+    tag: 'Montaje pestañas + Hidralips'
+  },
+  {
+    id: 'promo-facial-completo',
+    name: 'Facial Completo',
+    category: '🎁 Promos Navideñas',
+    price: 105000,
+    originalPrice: 125000,
+    tag: 'Limpieza + Hidratación facial'
+  },
+  {
+    id: 'promo-whispy-navidad',
+    name: 'Whispy Navideño',
+    category: '🎁 Promos Navideñas',
+    price: 110000,
+    originalPrice: 117000,
+    tag: 'Efecto Whispy + Color o Apliques'
+  },
+  // ── MONTAJES ──
   {
     id: 'efecto-natural',
     name: 'Efecto Natural',

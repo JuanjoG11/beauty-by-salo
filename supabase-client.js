@@ -92,6 +92,18 @@ const DEFAULT_SERVICES = [
     photos: ['img/efecto-whispy.jpg']
   },
   {
+    id: 'tecnorimel',
+    title: 'Tecno Rímel',
+    category: 'pestañas',
+    badge: '💎 Tecno Rímel',
+    description: 'Efecto tecnológico que simula el acabado del rímel: oscuro, definido y de larga duración.',
+    price_main: '$85.000',
+    price_retouch: '$50.000',
+    wa_link: 'https://wa.me/573126879434?text=%C2%A1Hola%20Salom%C3%A9!%20%F0%9F%8C%B8%20Me%20interesa%20agendar%20el%20*Tecno%20R%C3%ADmel*.',
+    cover_url: 'img/efecto-whispy.jpg',
+    photos: ['img/efecto-whispy.jpg']
+  },
+  {
     id: 'hidratacion-facial',
     title: 'Hidratación Facial',
     category: 'faciales',
