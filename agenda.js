@@ -394,6 +394,19 @@ document.addEventListener('DOMContentLoaded', () => {
       // Marcar el slot como tomado en localStorage (reserva optimista)
       markSlotAsTaken(state.selectedDate, state.selectedTime);
 
+      // Registrar cita en el módulo de citas
+      if (typeof registrarCitaDesdeAgenda === 'function') {
+        registrarCitaDesdeAgenda({
+          nombre:   name,
+          servicio: svc.name,
+          fecha:    state.selectedDate,
+          hora:     state.selectedTime,
+          precio:   svc.price,
+          abono:    abono,
+          nota:     note || '',
+        });
+      }
+
       // Redirigir a WhatsApp
       window.open(waUrl, '_blank');
 

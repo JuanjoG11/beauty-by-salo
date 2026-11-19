@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -125,6 +125,7 @@
       <button class="u-tab active" data-tab="catalogo">Catálogo</button>
       <button class="u-tab" data-tab="horarios">Agenda · Horarios</button>
       <button class="u-tab" data-tab="servicios">Agenda · Servicios</button>
+      <button class="u-tab" data-tab="citas">🗓 Citas</button>
     </div>
 
     <!-- ══════════════════════════════════════
@@ -496,6 +497,34 @@
       });
     })();
   </script>
+
+    <!-- TAB 4: CITAS -->
+    <div class="u-tab-content" id="utab-citas">
+      <div id="citasPanel"></div>
+    </div>
+
+    <script src="citas.js"></script>
+    <script>
+      // Inicializar citas si ya está autenticado
+      document.addEventListener('DOMContentLoaded', () => {
+        const app = document.getElementById('adminApp');
+        const checkInit = setInterval(() => {
+          if (app && app.style.display !== 'none') {
+            clearInterval(checkInit);
+            if (typeof initCitasPanel === 'function') initCitasPanel();
+          }
+        }, 400);
+
+        // Re-inicializar al cambiar al tab de citas
+        document.querySelectorAll('.u-tab').forEach(btn => {
+          btn.addEventListener('click', () => {
+            if (btn.dataset.tab === 'citas' && typeof initCitasPanel === 'function') {
+              setTimeout(() => { document.getElementById('citasPanel').innerHTML = ''; initCitasPanel(); }, 50);
+            }
+          });
+        });
+      });
+    </script>
 </body>
 
 </html>
