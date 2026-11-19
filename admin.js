@@ -96,6 +96,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else {
       services = getLocalServices();
     }
+    // Garantizar que todos los servicios del DEFAULT estén presentes
+    if (typeof DEFAULT_SERVICES !== 'undefined') {
+      DEFAULT_SERVICES.forEach(localSvc => {
+        if (!services.find(s => s.id === localSvc.id)) {
+          services.push(localSvc);
+        }
+      });
+    }
     renderSidebarMenu();
     selectService(currentServiceId);
   };
