@@ -159,7 +159,19 @@ const LOCAL_STORAGE_KEY = 'salome_beauty_services_v2';
 function getLocalServices() {
   const data = localStorage.getItem(LOCAL_STORAGE_KEY);
   if (data) {
-    try { return JSON.parse(data); } catch(e) {}
+    try {
+      const parsed = JSON.parse(data);
+      // Verificar que tecnorimel esté — si no, agregarlo
+      const hasTecno = parsed.some(s => s.id === 'tecnorimel');
+      if (!hasTecno) {
+        const tecno = DEFAULT_SERVICES.find(s => s.id === 'tecnorimel');
+        if (tecno) {
+          parsed.push(tecno);
+          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(parsed));
+        }
+      }
+      return parsed;
+    } catch(e) {}
   }
   localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(DEFAULT_SERVICES));
   return DEFAULT_SERVICES;
