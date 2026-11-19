@@ -155,8 +155,16 @@ const DEFAULT_SERVICES = [
 
 // Helper de almacenamiento local
 const LOCAL_STORAGE_KEY = 'salome_beauty_services_v2';
+const LOCAL_STORAGE_VERSION = 'v3'; // Cambiar aquí fuerza reset del caché
 
 function getLocalServices() {
+  // Si la versión cambió, limpiar caché y recargar con defaults
+  const savedVersion = localStorage.getItem(LOCAL_STORAGE_KEY + '_version');
+  if (savedVersion !== LOCAL_STORAGE_VERSION) {
+    localStorage.removeItem(LOCAL_STORAGE_KEY);
+    localStorage.setItem(LOCAL_STORAGE_KEY + '_version', LOCAL_STORAGE_VERSION);
+  }
+
   const data = localStorage.getItem(LOCAL_STORAGE_KEY);
   if (data) {
     try {
@@ -225,6 +233,13 @@ async function fetchAllServices() {
         });
 
         // Actualizar cache local
+        // Inyectar servicios locales que no estén en Supabase
+        DEFAULT_SERVICES.forEach(localSvc => {
+          if (!mappedServices.find(s => s.id === localSvc.id)) {
+            mappedServices.push(localSvc);
+          }
+        });
+
         saveLocalServices(mappedServices);
         return mappedServices;
       }
