@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel Admin · Beauty Studio by Salomé Osorio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="admin.css" />
+  <link rel="stylesheet" href="agenda-admin.css" />
+
+  <!-- Supabase CDN (required by supabase-client.js) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+
+  <style>
+    /* ── Unified header ── */
+    .unified-header {
+      background: linear-gradient(135deg, #3d1a2e, #c95b84);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .unified-logo {
+      height: 32px;
+      filter: brightness(0) invert(1);
+      opacity: 0.9;
+    }
+    .unified-brand-text {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.78rem;
+      font-family: Poppins, sans-serif;
+    }
+    .unified-header-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    /* ── Tab bar ── */
+    .unified-tabs {
+      display: flex;
+      background: #fff;
+      border-bottom: 2px solid #ffd6e7;
+      padding: 0 20px;
+    }
+    .u-tab {
+      padding: 13px 22px;
+      border: none;
+      border-bottom: 3px solid transparent;
+      background: none;
+      font-family: Poppins, sans-serif;
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: #b07d9b;
+      cursor: pointer;
+      margin-bottom: -2px;
+      transition: all 0.2s;
+    }
+    .u-tab.active { color: #c95b84; border-bottom-color: #c95b84; }
+    .u-tab:hover  { color: #c95b84; }
+    /* ── Tab content ── */
+    .u-tab-content        { display: none; }
+    .u-tab-content.active { display: block; }
+  </style>
+</head>
+
+<body>
+
+  <!-- ══════════════════════════════════════════
+       PIN MODAL — single modal for all tabs.
+       Uses id="pinModalOverlay" (admin.js) and
+       a hidden dummy #pinOverlay for agenda-admin.js.
+  ══════════════════════════════════════════ -->
+  <div class="pin-modal-overlay" id="pinModalOverlay">
+    <div class="pin-card">
+      <div class="pin-icon">🌸</div>
+      <h2>Panel Admin · Salomé</h2>
+      <p>Ingresa tu clave PIN para acceder al panel de administración:</p>
+      <form id="pinForm">
+        <div class="input-group">
+          <input type="password" id="pinInput" placeholder="Clave PIN (salo2026)"
+                 required autofocus autocomplete="current-password" />
+        </div>
+        <button type="submit" class="admin-btn primary">Ingresar al Admin 💖</button>
+      </form>
+      <div class="pin-hint">Clave: <strong>salo2026</strong></div>
+    </div>
+  </div>
+
+  <!--
+    agenda-admin.js looks for id="pinOverlay" (its own PIN overlay).
+    We provide a hidden element so its getElementById calls don't return null
+    and throw errors. It is permanently hidden; actual auth is handled by admin.js.
+  -->
+  <div id="pinOverlay" style="display:none !important;"></div>
+
+  <!-- ══════════════════════════════════════════
+       UNIFIED APP
+       id="adminApp" is used by admin.js to show/hide the app after auth.
+       agenda-admin.js also looks for id="adminApp" — same element, works fine.
+       agenda-servicios-admin.js polls for adminApp visibility — also works.
+  ══════════════════════════════════════════ -->
+  <div id="adminApp" style="display:none;">
+
+    <!-- UNIFIED HEADER -->
+    <header class="unified-header">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <img src="img/logo.png" alt="Salomé Osorio" class="unified-logo"
+             onerror="this.style.display='none'" />
+        <span class="unified-brand-text">Panel de Administración</span>
+      </div>
+      <div class="unified-header-actions">
+        <a href="index.html" target="_blank" class="admin-btn outline">🌐 Ver Web</a>
+        <a href="agenda.html" target="_blank" class="admin-btn outline">📅 Ver Agenda</a>
+        <button id="logoutBtn" class="admin-btn danger-sm">🔒 Salir</button>
+      </div>
+    </header>
+
+    <!-- TAB BAR -->
+    <div class="unified-tabs">
+      <button class="u-tab active" data-tab="catalogo">Catálogo</button>
+      <button class="u-tab" data-tab="horarios">Agenda · Horarios</button>
+      <button class="u-tab" data-tab="servicios">Agenda · Servicios</button>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         TAB 1 — CATÁLOGO
+         Exact inner content of <main class="admin-container"> from admin.html
+    ══════════════════════════════════════ -->
+    <div class="u-tab-content active" id="utab-catalogo">
+      <main class="admin-container">
+
+        <!-- LATERAL: SELECCIÓN DE SERVICIO Y NAVEGACIÓN -->
+        <aside class="admin-sidebar">
+          <div class="sidebar-header">
+            <h3>Efectos y Servicios</h3>
+            <p>Selecciona un servicio para editar sus fotos y precios:</p>
+          </div>
+          <ul class="service-menu" id="serviceMenuList">
+            <!-- Se llena dinámicamente -->
+          </ul>
+        </aside>
+
+        <!-- ÁREA DE EDICIÓN PRINCIPAL -->
+        <section class="admin-content">
+
+          <!-- HEADER DEL SERVICIO SELECCIONADO -->
+          <div class="service-editor-header">
+            <div>
+              <span class="category-pill" id="activeCategoryPill">Pestañas</span>
+              <h2 id="activeServiceTitle">Efecto Natural</h2>
+              <p class="service-id-tag">ID: <code id="activeServiceId">efecto-natural</code></p>
+            </div>
+            <button class="admin-btn save" id="saveServiceBtn">💾 Guardar Cambios</button>
+          </div>
+
+          <!-- SECCIÓN 1: GESTOR DE FOTOS & PORTADA -->
+          <div class="admin-card">
+            <div class="card-title-bar">
+              <h3>📸 Fotos del Servicio / Efecto</h3>
+              <span class="photo-count-badge" id="activePhotoCount">2 fotos subidas</span>
+            </div>
+            <p class="card-subtitle">Sube fotos demostrativas. Haz clic en <strong>"⭐ Definir Portada"</strong> para elegir qué foto se verá como portada principal.</p>
+
+            <!-- UPLOAD BOX -->
+            <div class="upload-dropzone" id="uploadDropzone">
+              <input type="file" id="photoFileInput" accept="image/*" multiple style="display:none;" />
+              <div class="dropzone-content">
+                <span class="upload-icon">📤</span>
+                <p><strong>Arrastra imágenes aquí</strong> o <span class="click-link">haz clic para explorar</span></p>
+                <span class="upload-info">JPG, PNG o WEBP (puedes subir varias a la vez)</span>
+              </div>
+            </div>
+
+            <!-- REJILLA DE FOTOS SUBIDAS -->
+            <div class="photos-grid" id="photosGrid">
+              <!-- Se llena dinámicamente -->
+            </div>
+          </div>
+          <button class="admin-btn save" id="savePhotosBtn">💾 Guardar Fotos</button>
+
+          <!-- SECCIÓN 2: EDICIÓN DE PRECIOS Y DETALLES -->
+          <div class="admin-card">
+            <h3>✏️ Detalles y Precios</h3>
+            <form id="serviceDetailsForm" class="details-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="editTitle">Nombre del Servicio:</label>
+                  <input type="text" id="editTitle" required />
+                </div>
+                <div class="form-group">
+                  <label for="editBadge">Etiqueta Badge (ej: 🌸 Sutil &amp; Delicado):</label>
+                  <input type="text" id="editBadge" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="editDescription">Descripción breve:</label>
+                <textarea id="editDescription" rows="3" required></textarea>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="editPriceMain">Precio Montaje (Set Nuevo):</label>
+                  <input type="text" id="editPriceMain" placeholder="$70.000" />
+                </div>
+                <div class="form-group">
+                  <label for="editPriceRetouch">Precio de Retoque:</label>
+                  <input type="text" id="editPriceRetouch" placeholder="$45.000" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="editWaLink">Link de WhatsApp Agendamiento:</label>
+                <input type="url" id="editWaLink" required />
+              </div>
+            </form>
+          </div>
+
+          <!-- SECCIÓN 3: INSTALADOR SUPABASE SQL -->
+          <div class="admin-card sql-box">
+            <div class="card-title-bar">
+              <h3>⚡ Configuración de Tablas en Supabase</h3>
+              <button class="admin-btn outline-sm" id="copySqlBtn">📋 Copiar Script SQL</button>
+            </div>
+            <p class="card-subtitle">Tu proyecto de Supabase (<code>dtjgjehnabkiqrhyekpe</code>) está configurado. Si deseas sincronizar la base de datos en la nube, abre tu Dashboard de Supabase → SQL Editor y pega este código de 1 clic:</p>
+            <pre><code id="sqlCodePreview"></code></pre>
+          </div>
+
+        </section>
+      </main>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         TAB 2 — AGENDA · HORARIOS
+         Exact inner content of <main class="admin-main"> from agenda-admin.html tab-horarios
+    ══════════════════════════════════════ -->
+    <div class="u-tab-content" id="utab-horarios">
+      <main class="admin-main">
+
+        <aside class="admin-side">
+
+          <div class="side-card">
+            <h3>Agregar día</h3>
+            <div class="form-field">
+              <label>Fecha:</label>
+              <input type="date" id="newDayInput" />
+            </div>
+            <button class="btn-primary full-w" id="addDayBtn">Agregar este día</button>
+          </div>
+
+          <div class="side-card">
+            <h3>Plantillas de horarios</h3>
+            <p class="side-hint">Aplica al día seleccionado.</p>
+            <div class="template-list">
+              <button class="template-btn" data-slots='["7:00 a.m.","8:30 a.m.","10:00 a.m.","11:30 a.m.","2:00 p.m.","3:30 p.m.","5:00 p.m."]'>Jornada completa (7)</button>
+              <button class="template-btn" data-slots='["9:00 a.m.","11:00 a.m.","1:00 p.m.","3:00 p.m.","5:00 p.m."]'>Jornada 5 citas</button>
+              <button class="template-btn" data-slots='["9:00 a.m.","10:30 a.m.","12:00 p.m.","1:30 p.m."]'>Solo mañanas (4)</button>
+              <button class="template-btn" data-slots='["2:00 p.m.","3:30 p.m.","5:00 p.m.","6:30 p.m."]'>Solo tardes (4)</button>
+            </div>
+          </div>
+
+          <div class="side-card">
+            <h3>Agregar hora manual</h3>
+            <div class="add-time-row">
+              <input type="time" id="newTimeInput" value="09:00" />
+              <button class="btn-primary" id="addTimeBtn">Agregar</button>
+            </div>
+          </div>
+
+          <div class="side-card stats-card">
+            <h3>Resumen</h3>
+            <div class="stats-grid">
+              <div class="stat-item"><span id="stat-days">0</span><label>Días</label></div>
+              <div class="stat-item"><span id="stat-slots">0</span><label>Horarios</label></div>
+              <div class="stat-item"><span id="stat-available">0</span><label>Libres</label></div>
+              <div class="stat-item"><span id="stat-taken">0</span><label>Reservados</label></div>
+            </div>
+          </div>
+
+          <div class="side-card">
+            <h3>Acciones</h3>
+            <div class="global-actions">
+              <button class="btn-outline full-w" id="exportBtn">Exportar agenda (JSON)</button>
+              <button class="btn-outline full-w" id="importBtn">Importar agenda (JSON)</button>
+              <input type="file" id="importFileInput" accept=".json" style="display:none" />
+              <button class="btn-danger full-w" id="clearAllBtn">Borrar toda la agenda</button>
+            </div>
+          </div>
+
+        </aside>
+
+        <section class="admin-content">
+          <div class="content-header">
+            <h2>Días configurados</h2>
+            <p id="selectedDayLabel">Selecciona un día para editar sus horarios.</p>
+          </div>
+
+          <div class="days-list" id="daysList"></div>
+
+          <div class="day-editor" id="dayEditor" style="display:none;">
+            <div class="day-editor-header">
+              <h3 id="editorDayTitle">—</h3>
+              <div class="editor-header-actions">
+                <button class="btn-outline-sm" id="clearDaySlotsBtn">Limpiar horarios</button>
+                <button class="btn-danger-sm" id="deleteDayBtn">Eliminar día</button>
+              </div>
+            </div>
+            <div class="slots-manager" id="slotsManager"></div>
+            <button class="btn-primary full-w" id="saveDayBtn" style="margin-top:16px;">Guardar cambios</button>
+          </div>
+
+          <div class="empty-agenda" id="emptyAgendaMsg">
+            <div class="empty-icon">🌸</div>
+            <h3>Comienza configurando tu agenda</h3>
+            <p>Agrega días y define los horarios disponibles para cada uno.</p>
+          </div>
+        </section>
+
+      </main>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         TAB 3 — AGENDA · SERVICIOS
+         Exact inner content of <div class="servicios-admin"> from agenda-admin.html tab-servicios
+    ══════════════════════════════════════ -->
+    <div class="u-tab-content" id="utab-servicios">
+      <div class="servicios-admin">
+
+        <!-- PANEL IZQUIERDO: lista de servicios -->
+        <aside class="svc-sidebar">
+          <div class="svc-sidebar-header">
+            <h3>Servicios</h3>
+            <button class="btn-primary" id="newSvcBtn">+ Nuevo</button>
+          </div>
+
+          <!-- Filtro por categoría -->
+          <div class="svc-filter">
+            <select id="svcFilterCat">
+              <option value="">Todas las categorías</option>
+            </select>
+          </div>
+
+          <div class="svc-list" id="svcList">
+            <!-- dinámico -->
+          </div>
+        </aside>
+
+        <!-- PANEL DERECHO: editor de servicio -->
+        <section class="svc-editor" id="svcEditor">
+
+          <!-- Estado vacío -->
+          <div class="svc-editor-empty" id="svcEditorEmpty">
+            <div class="empty-icon">💅</div>
+            <h3>Selecciona o crea un servicio</h3>
+            <p>Elige uno de la lista o toca "+ Nuevo" para crear uno.</p>
+          </div>
+
+          <!-- Formulario -->
+          <div class="svc-editor-form" id="svcEditorForm" style="display:none;">
+            <div class="svc-form-header">
+              <h3 id="svcFormTitle">Nuevo servicio</h3>
+              <button class="btn-danger-sm" id="deleteSvcBtn" style="display:none;">Eliminar</button>
+            </div>
+
+            <div class="svc-form-grid">
+
+              <div class="form-field full">
+                <label>Nombre del servicio *</label>
+                <input type="text" id="svcName" placeholder="Ej: Efecto Natural" />
+              </div>
+
+              <div class="form-field">
+                <label>Categoría *</label>
+                <div class="cat-input-row">
+                  <select id="svcCat">
+                    <option value="">Selecciona...</option>
+                  </select>
+                  <button class="btn-outline-sm" id="newCatBtn" title="Nueva categoría">+ Cat.</button>
+                </div>
+              </div>
+
+              <div class="form-field">
+                <label>Precio *</label>
+                <input type="number" id="svcPrice" placeholder="70000" min="0" step="1000" />
+              </div>
+
+              <div class="form-field">
+                <label>Precio original (para promos)</label>
+                <input type="number" id="svcOriginalPrice" placeholder="Dejar vacío si no es promo" min="0" step="1000" />
+              </div>
+
+              <div class="form-field full">
+                <label>Descripción / detalle del paquete</label>
+                <input type="text" id="svcTag" placeholder="Ej: Montaje pestañas + Hidralips" />
+              </div>
+
+              <div class="form-field">
+                <label>Duración (opcional)</label>
+                <input type="text" id="svcDuration" placeholder="Ej: 90 min" />
+              </div>
+
+            </div>
+
+            <!-- PREVIEW -->
+            <div class="svc-preview">
+              <p class="preview-label">Vista previa en la agenda:</p>
+              <div class="preview-card" id="previewCard">
+                <span class="svc-dot"></span>
+                <span class="preview-name" id="previewName">Nombre del servicio</span>
+                <span class="preview-price" id="previewPrice">$0</span>
+              </div>
+            </div>
+
+            <div class="svc-form-actions">
+              <button class="btn-back-svc" id="cancelSvcBtn">Cancelar</button>
+              <button class="btn-primary" id="saveSvcBtn">Guardar servicio</button>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- PANEL: Gestión de categorías -->
+        <div class="cat-panel">
+          <h3>Categorías</h3>
+          <p class="side-hint">Arrastra para reordenar. Las categorías definen el orden en que aparecen en la agenda.</p>
+          <div class="cat-list" id="catList"><!-- dinámico --></div>
+          <div class="cat-add-row">
+            <input type="text" id="newCatInput" placeholder="Nueva categoría..." />
+            <button class="btn-primary" id="addCatConfirmBtn">Agregar</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /#adminApp -->
+
+  <!-- Toast shared by all tabs -->
+  <div class="admin-toast" id="adminToast"></div>
+
+  <!-- Scripts (order matters) -->
+  <script src="agenda-data.js"></script>
+  <script src="admin.js"></script>
+  <script src="agenda-admin.js"></script>
+  <script src="agenda-servicios-admin.js"></script>
+
+  <script>
+    // ── Tab switching ──────────────────────────────────────────
+    document.querySelectorAll('.u-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.u-tab').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.u-tab-content').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('utab-' + btn.dataset.tab).classList.add('active');
+      });
+    });
+
+    // ── Agenda-admin.js auth bridge ────────────────────────────
+    // agenda-admin.js has its own DOMContentLoaded that calls checkAuth(),
+    // which looks for id="pinOverlay" and id="adminApp". Since pinOverlay is
+    // a hidden dummy and adminApp is our real container, agenda-admin.js's
+    // checkAuth will correctly keep pinOverlay hidden (display:none) and show
+    // adminApp once its own sessionStorage key is set.
+    //
+    // However, agenda-admin.js writes a SEPARATE AUTH_KEY ('salome_admin_agenda_auth')
+    // into sessionStorage. When admin.js already authenticated the user and set
+    // 'salome_admin_auth' = 'true', agenda-admin.js still needs its own key.
+    //
+    // We sync the two keys: after admin.js sets salome_admin_auth, also set
+    // salome_admin_agenda_auth so the agenda tab initializes correctly.
+    (function syncAgendaAuth() {
+      // Run after all scripts have loaded
+      window.addEventListener('load', () => {
+        const adminKey  = 'salome_admin_auth';
+        const agendaKey = 'salome_admin_agenda_auth';
+
+        // If already authenticated by admin.js, also mark agenda auth
+        if (sessionStorage.getItem(adminKey) === 'true') {
+          sessionStorage.setItem(agendaKey, 'true');
+        }
+
+        // Watch for future auth (admin.js sets it on pinForm submit)
+        // We piggyback on the existing pinForm submit event by polling
+        // sessionStorage; a MutationObserver on adminApp visibility is cleaner.
+        const appEl = document.getElementById('adminApp');
+        if (appEl) {
+          const obs = new MutationObserver(() => {
+            if (appEl.style.display !== 'none') {
+              sessionStorage.setItem(agendaKey, 'true');
+            }
+          });
+          obs.observe(appEl, { attributes: true, attributeFilter: ['style'] });
+        }
+      });
+    })();
+  </script>
+</body>
+
+</html>

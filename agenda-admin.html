@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Agenda Navideña 🎄 · Beauty Studio by Salomé Osorio</title>
+  <title>Admin Agenda · Beauty Studio by Salomé Osorio</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="agenda-admin.css" />
 </head>
@@ -14,12 +14,12 @@
   <!-- MODAL DE AUTENTICACIÓN -->
   <div class="pin-overlay" id="pinOverlay">
     <div class="pin-card">
-      <div class="pin-deco">🎄</div>
+      <div class="pin-deco">🌸</div>
       <h2>Admin · Agenda Navideña</h2>
-      <p>Ingresa tu clave para gestionar los horarios disponibles:</p>
+      <p>Ingresa tu clave para gestionar la agenda:</p>
       <form id="pinForm">
         <input type="password" id="pinInput" placeholder="Clave de acceso" autocomplete="current-password" autofocus />
-        <button type="submit" class="btn-primary">Ingresar 💕</button>
+        <button type="submit" class="btn-primary">Ingresar</button>
       </form>
       <p class="pin-hint">Clave: <strong>salo2026</strong></p>
     </div>
@@ -31,151 +31,229 @@
     <!-- HEADER -->
     <header class="admin-header">
       <div class="admin-brand">
-        <span class="brand-icon">🎄</span>
-        <div>
-          <h1>Agenda Navideña</h1>
-          <p>Beauty Studio by Salomé Osorio · Gestión de horarios</p>
-        </div>
+        <img src="img/logo.png" alt="Salomé Osorio" class="admin-logo" onerror="this.style.display='none'" />
       </div>
       <div class="header-actions">
-        <a href="agenda.html" target="_blank" class="btn-outline">🌐 Ver agenda pública</a>
-        <a href="index.html" target="_blank" class="btn-outline">🌸 Ver web</a>
-        <button id="logoutBtn" class="btn-danger-sm">🔒 Salir</button>
+        <a href="agenda.html" target="_blank" class="btn-outline">Ver agenda</a>
+        <a href="index.html" target="_blank" class="btn-outline">Ver web</a>
+        <button id="logoutBtn" class="btn-danger-sm">Salir</button>
       </div>
     </header>
 
-    <!-- CONTENIDO PRINCIPAL -->
-    <main class="admin-main">
+    <!-- TABS -->
+    <div class="admin-tabs">
+      <button class="tab-btn active" data-tab="horarios">Horarios</button>
+      <button class="tab-btn" data-tab="servicios">Servicios & Categorías</button>
+    </div>
 
-      <!-- PANEL IZQUIERDO: Configuración Global -->
-      <aside class="admin-side">
+    <!-- ═══════════════════════════════════
+         TAB 1: HORARIOS
+    ═══════════════════════════════════ -->
+    <div class="tab-content active" id="tab-horarios">
+      <main class="admin-main">
 
-        <!-- AGREGAR NUEVO DÍA -->
-        <div class="side-card">
-          <h3>➕ Agregar día disponible</h3>
-          <div class="form-field">
-            <label>Fecha:</label>
-            <input type="date" id="newDayInput" />
-          </div>
-          <button class="btn-primary full-w" id="addDayBtn">Agregar este día</button>
-        </div>
+        <aside class="admin-side">
 
-        <!-- HORARIOS PREDEFINIDOS -->
-        <div class="side-card">
-          <h3>⏰ Plantillas de horarios</h3>
-          <p class="side-hint">Aplica una plantilla de horarios al día seleccionado en el calendario.</p>
-
-          <div class="template-list">
-            <button class="template-btn" data-slots='["7:00 a.m.","8:30 a.m.","10:00 a.m.","11:30 a.m.","2:00 p.m.","3:30 p.m.","5:00 p.m."]'>
-              🕖 Jornada completa (7)
-            </button>
-            <button class="template-btn" data-slots='["9:00 a.m.","11:00 a.m.","1:00 p.m.","3:00 p.m.","5:00 p.m."]'>
-              ☀️ Jornada 5 citas
-            </button>
-            <button class="template-btn" data-slots='["9:00 a.m.","10:30 a.m.","12:00 p.m.","1:30 p.m."]'>
-              🌅 Solo mañanas (4)
-            </button>
-            <button class="template-btn" data-slots='["2:00 p.m.","3:30 p.m.","5:00 p.m.","6:30 p.m."]'>
-              🌆 Solo tardes (4)
-            </button>
-          </div>
-        </div>
-
-        <!-- AGREGAR HORA MANUAL -->
-        <div class="side-card">
-          <h3>🕐 Agregar hora manual</h3>
-          <p class="side-hint">Agrega una hora específica al día seleccionado.</p>
-          <div class="add-time-row">
-            <input type="time" id="newTimeInput" value="09:00" />
-            <button class="btn-primary" id="addTimeBtn">Agregar</button>
-          </div>
-        </div>
-
-        <!-- ESTADÍSTICAS -->
-        <div class="side-card stats-card">
-          <h3>📊 Resumen</h3>
-          <div class="stats-grid" id="statsGrid">
-            <div class="stat-item">
-              <span id="stat-days">0</span>
-              <label>Días activos</label>
+          <div class="side-card">
+            <h3>Agregar día</h3>
+            <div class="form-field">
+              <label>Fecha:</label>
+              <input type="date" id="newDayInput" />
             </div>
-            <div class="stat-item">
-              <span id="stat-slots">0</span>
-              <label>Horarios totales</label>
-            </div>
-            <div class="stat-item">
-              <span id="stat-available">0</span>
-              <label>Disponibles</label>
-            </div>
-            <div class="stat-item">
-              <span id="stat-taken">0</span>
-              <label>Reservados</label>
-            </div>
+            <button class="btn-primary full-w" id="addDayBtn">Agregar este día</button>
           </div>
-        </div>
 
-        <!-- ACCIONES GLOBALES -->
-        <div class="side-card">
-          <h3>⚙️ Acciones globales</h3>
-          <div class="global-actions">
-            <button class="btn-outline full-w" id="exportBtn">📋 Exportar agenda (JSON)</button>
-            <button class="btn-outline full-w" id="importBtn">📥 Importar agenda (JSON)</button>
-            <input type="file" id="importFileInput" accept=".json" style="display:none" />
-            <button class="btn-danger full-w" id="clearAllBtn">🗑️ Borrar toda la agenda</button>
-          </div>
-        </div>
-
-      </aside>
-
-      <!-- PANEL DERECHO: Días y Horarios -->
-      <section class="admin-content">
-        <div class="content-header">
-          <h2>📅 Días configurados</h2>
-          <p id="selectedDayLabel">Selecciona un día del listado para editar sus horarios.</p>
-        </div>
-
-        <!-- LISTA DE DÍAS -->
-        <div class="days-list" id="daysList">
-          <!-- Se llena dinámicamente -->
-        </div>
-
-        <!-- EDITOR DE HORARIOS DEL DÍA SELECCIONADO -->
-        <div class="day-editor" id="dayEditor" style="display:none;">
-          <div class="day-editor-header">
-            <h3 id="editorDayTitle">—</h3>
-            <div class="editor-header-actions">
-              <button class="btn-outline-sm" id="clearDaySlotsBtn">🗑️ Limpiar horarios</button>
-              <button class="btn-danger-sm" id="deleteDayBtn">❌ Eliminar día</button>
+          <div class="side-card">
+            <h3>Plantillas de horarios</h3>
+            <p class="side-hint">Aplica al día seleccionado.</p>
+            <div class="template-list">
+              <button class="template-btn" data-slots='["7:00 a.m.","8:30 a.m.","10:00 a.m.","11:30 a.m.","2:00 p.m.","3:30 p.m.","5:00 p.m."]'>Jornada completa (7)</button>
+              <button class="template-btn" data-slots='["9:00 a.m.","11:00 a.m.","1:00 p.m.","3:00 p.m.","5:00 p.m."]'>Jornada 5 citas</button>
+              <button class="template-btn" data-slots='["9:00 a.m.","10:30 a.m.","12:00 p.m.","1:30 p.m."]'>Solo mañanas (4)</button>
+              <button class="template-btn" data-slots='["2:00 p.m.","3:30 p.m.","5:00 p.m.","6:30 p.m."]'>Solo tardes (4)</button>
             </div>
           </div>
 
-          <div class="slots-manager" id="slotsManager">
-            <!-- Se llena dinámicamente -->
+          <div class="side-card">
+            <h3>Agregar hora manual</h3>
+            <div class="add-time-row">
+              <input type="time" id="newTimeInput" value="09:00" />
+              <button class="btn-primary" id="addTimeBtn">Agregar</button>
+            </div>
           </div>
 
-          <button class="btn-primary full-w" id="saveDayBtn" style="margin-top:16px;">
-            💾 Guardar cambios del día
-          </button>
+          <div class="side-card stats-card">
+            <h3>Resumen</h3>
+            <div class="stats-grid">
+              <div class="stat-item"><span id="stat-days">0</span><label>Días</label></div>
+              <div class="stat-item"><span id="stat-slots">0</span><label>Horarios</label></div>
+              <div class="stat-item"><span id="stat-available">0</span><label>Libres</label></div>
+              <div class="stat-item"><span id="stat-taken">0</span><label>Reservados</label></div>
+            </div>
+          </div>
+
+          <div class="side-card">
+            <h3>Acciones</h3>
+            <div class="global-actions">
+              <button class="btn-outline full-w" id="exportBtn">Exportar agenda (JSON)</button>
+              <button class="btn-outline full-w" id="importBtn">Importar agenda (JSON)</button>
+              <input type="file" id="importFileInput" accept=".json" style="display:none" />
+              <button class="btn-danger full-w" id="clearAllBtn">Borrar toda la agenda</button>
+            </div>
+          </div>
+
+        </aside>
+
+        <section class="admin-content">
+          <div class="content-header">
+            <h2>Días configurados</h2>
+            <p id="selectedDayLabel">Selecciona un día para editar sus horarios.</p>
+          </div>
+
+          <div class="days-list" id="daysList"></div>
+
+          <div class="day-editor" id="dayEditor" style="display:none;">
+            <div class="day-editor-header">
+              <h3 id="editorDayTitle">—</h3>
+              <div class="editor-header-actions">
+                <button class="btn-outline-sm" id="clearDaySlotsBtn">Limpiar horarios</button>
+                <button class="btn-danger-sm" id="deleteDayBtn">Eliminar día</button>
+              </div>
+            </div>
+            <div class="slots-manager" id="slotsManager"></div>
+            <button class="btn-primary full-w" id="saveDayBtn" style="margin-top:16px;">Guardar cambios</button>
+          </div>
+
+          <div class="empty-agenda" id="emptyAgendaMsg">
+            <div class="empty-icon">🌸</div>
+            <h3>Comienza configurando tu agenda</h3>
+            <p>Agrega días y define los horarios disponibles para cada uno.</p>
+          </div>
+        </section>
+
+      </main>
+    </div>
+
+    <!-- ═══════════════════════════════════
+         TAB 2: SERVICIOS & CATEGORÍAS
+    ═══════════════════════════════════ -->
+    <div class="tab-content" id="tab-servicios">
+      <div class="servicios-admin">
+
+        <!-- PANEL IZQUIERDO: lista de servicios -->
+        <aside class="svc-sidebar">
+          <div class="svc-sidebar-header">
+            <h3>Servicios</h3>
+            <button class="btn-primary" id="newSvcBtn">+ Nuevo</button>
+          </div>
+
+          <!-- Filtro por categoría -->
+          <div class="svc-filter">
+            <select id="svcFilterCat">
+              <option value="">Todas las categorías</option>
+            </select>
+          </div>
+
+          <div class="svc-list" id="svcList">
+            <!-- dinámico -->
+          </div>
+        </aside>
+
+        <!-- PANEL DERECHO: editor de servicio -->
+        <section class="svc-editor" id="svcEditor">
+
+          <!-- Estado vacío -->
+          <div class="svc-editor-empty" id="svcEditorEmpty">
+            <div class="empty-icon">💅</div>
+            <h3>Selecciona o crea un servicio</h3>
+            <p>Elige uno de la lista o toca "+ Nuevo" para crear uno.</p>
+          </div>
+
+          <!-- Formulario -->
+          <div class="svc-editor-form" id="svcEditorForm" style="display:none;">
+            <div class="svc-form-header">
+              <h3 id="svcFormTitle">Nuevo servicio</h3>
+              <button class="btn-danger-sm" id="deleteSvcBtn" style="display:none;">Eliminar</button>
+            </div>
+
+            <div class="svc-form-grid">
+
+              <div class="form-field full">
+                <label>Nombre del servicio *</label>
+                <input type="text" id="svcName" placeholder="Ej: Efecto Natural" />
+              </div>
+
+              <div class="form-field">
+                <label>Categoría *</label>
+                <div class="cat-input-row">
+                  <select id="svcCat">
+                    <option value="">Selecciona...</option>
+                  </select>
+                  <button class="btn-outline-sm" id="newCatBtn" title="Nueva categoría">+ Cat.</button>
+                </div>
+              </div>
+
+              <div class="form-field">
+                <label>Precio *</label>
+                <input type="number" id="svcPrice" placeholder="70000" min="0" step="1000" />
+              </div>
+
+              <div class="form-field">
+                <label>Precio original (para promos)</label>
+                <input type="number" id="svcOriginalPrice" placeholder="Dejar vacío si no es promo" min="0" step="1000" />
+              </div>
+
+              <div class="form-field full">
+                <label>Descripción / detalle del paquete</label>
+                <input type="text" id="svcTag" placeholder="Ej: Montaje pestañas + Hidralips" />
+              </div>
+
+              <div class="form-field">
+                <label>Duración (opcional)</label>
+                <input type="text" id="svcDuration" placeholder="Ej: 90 min" />
+              </div>
+
+            </div>
+
+            <!-- PREVIEW -->
+            <div class="svc-preview">
+              <p class="preview-label">Vista previa en la agenda:</p>
+              <div class="preview-card" id="previewCard">
+                <span class="svc-dot"></span>
+                <span class="preview-name" id="previewName">Nombre del servicio</span>
+                <span class="preview-price" id="previewPrice">$0</span>
+              </div>
+            </div>
+
+            <div class="svc-form-actions">
+              <button class="btn-back-svc" id="cancelSvcBtn">Cancelar</button>
+              <button class="btn-primary" id="saveSvcBtn">Guardar servicio</button>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- PANEL: Gestión de categorías -->
+        <div class="cat-panel">
+          <h3>Categorías</h3>
+          <p class="side-hint">Arrastra para reordenar. Las categorías definen el orden en que aparecen en la agenda.</p>
+          <div class="cat-list" id="catList"><!-- dinámico --></div>
+          <div class="cat-add-row">
+            <input type="text" id="newCatInput" placeholder="Nueva categoría..." />
+            <button class="btn-primary" id="addCatConfirmBtn">Agregar</button>
+          </div>
         </div>
 
-        <!-- MENSAJE VACÍO -->
-        <div class="empty-agenda" id="emptyAgendaMsg">
-          <div class="empty-icon">🎄</div>
-          <h3>¡Comienza configurando tu agenda navideña!</h3>
-          <p>Agrega días usando el panel izquierdo y define los horarios disponibles para cada uno.</p>
-        </div>
-
-      </section>
-
-    </main>
+      </div>
+    </div>
 
   </div>
 
-  <!-- TOAST NOTIFICATION -->
   <div class="admin-toast" id="adminToast"></div>
 
   <script src="agenda-data.js"></script>
   <script src="agenda-admin.js"></script>
+  <script src="agenda-servicios-admin.js"></script>
 </body>
 
 </html>

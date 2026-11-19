@@ -1,9 +1,23 @@
-// ==========================================
+﻿// ==========================================
 // BEAUTY STUDIO BY SALOMÉ OSORIO
 // Agenda Navideña — Script Principal
 // ==========================================
 
 document.addEventListener('DOMContentLoaded', () => {
+
+  // Cargar servicios personalizados del admin si existen
+  (function loadCustomIfExists() {
+    try {
+      const raw = localStorage.getItem('salome_booking_services_v1');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          BOOKING_SERVICES.length = 0;
+          parsed.forEach(s => BOOKING_SERVICES.push(s));
+        }
+      }
+    } catch(e) {}
+  })();
 
   // ──────────────────────────────────────
   // NIEVE NAVIDEÑA REALISTA
@@ -355,25 +369,26 @@ document.addEventListener('DOMContentLoaded', () => {
       const abono = calcAbono(svc.price);
       const note = noteEl ? noteEl.value.trim() : '';
 
-      // Construir mensaje de WhatsApp con emojis de texto
       const msgLines = [
-        `¡Hola Salomé! 💕 Quiero agendar mi cita navideña 2026 🎄`,
+        `Hola Salome! Quiero agendar mi cita navidena 2026`,
         ``,
-        `👤 *Nombre:* ${name}`,
-        `💅 *Servicio:* ${svc.name}`,
-        `📅 *Fecha:* ${formatDateDisplay(state.selectedDate)}`,
-        `⏰ *Hora:* ${state.selectedTime}`,
-        `💰 *Precio:* ${formatPrice(svc.price)}`,
-        `💳 *Abono (50%):* ${formatPrice(abono)}`,
+        `*Nombre:* ${name}`,
+        `*Servicio:* ${svc.name}`,
+        `*Fecha:* ${formatDateDisplay(state.selectedDate)}`,
+        `*Hora:* ${state.selectedTime}`,
+        `*Precio:* ${formatPrice(svc.price)}`,
+        `*Abono (50%):* ${formatPrice(abono)}`,
       ];
 
-      if (note) msgLines.push(`📝 *Nota:* ${note}`);
+      if (note) msgLines.push(`*Nota:* ${note}`);
 
       msgLines.push(``);
-      msgLines.push(`Entiendo que mi cita se confirma únicamente por WhatsApp, después de realizar el abono del 50% (${formatPrice(abono)}) 💖`);
-      msgLines.push(`Adjunto captura de la transferencia 🩷`);
+      msgLines.push(`Entiendo que mi cita se confirma unicamente por WhatsApp despues de realizar el abono del 50% (${formatPrice(abono)})`);
+      msgLines.push(`Adjunto captura de la transferencia`);
 
-      const waMsg = encodeURIComponent(msgLines.join('\n'));
+      // encodeURI preserva emojis y caracteres especiales, solo encodea lo necesario para URL
+      const rawMsg = msgLines.join('\n');
+      const waMsg = encodeURI(rawMsg).replace(/&/g, '%26').replace(/#/g, '%23').replace(/\+/g, '%2B');
       const waUrl = `https://wa.me/${WA_NUMBER}?text=${waMsg}`;
 
       // Marcar el slot como tomado en localStorage (reserva optimista)
