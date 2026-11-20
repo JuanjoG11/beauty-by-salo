@@ -509,18 +509,33 @@
       // Inicializar citas si ya está autenticado
       document.addEventListener('DOMContentLoaded', () => {
         const app = document.getElementById('adminApp');
+        let citasInited = false;
+
         const checkInit = setInterval(() => {
           if (app && app.style.display !== 'none') {
             clearInterval(checkInit);
-            if (typeof initCitasPanel === 'function') initCitasPanel();
+            if (!citasInited && typeof initCitasPanel === 'function') {
+              citasInited = true;
+              initCitasPanel();
+            }
           }
         }, 400);
 
-        // Re-inicializar al cambiar al tab de citas
+        // Al cambiar al tab de citas, solo recargar frescos — no reinicializar
         document.querySelectorAll('.u-tab').forEach(btn => {
           btn.addEventListener('click', () => {
-            if (btn.dataset.tab === 'citas' && typeof initCitasPanel === 'function') {
-              setTimeout(() => { document.getElementById('citasPanel').innerHTML = ''; initCitasPanel(); }, 50);
+            if (btn.dataset.tab === 'citas') {
+              if (!citasInited && typeof initCitasPanel === 'function') {
+                citasInited = true;
+                initCitasPanel();
+              } else if (typeof loadCitasFresh === 'function') {
+                loadCitasFresh().then(fresh => {
+                  if (typeof saveCitas === 'function') saveCitas(fresh);
+                  // Forzar re-render llamando initCitasPanel solo si el contenedor está vacío
+                  const panel = document.getElementById('citasPanel');
+                  if (panel && panel.innerHTML.trim() === '') initCitasPanel();
+                });
+              }
             }
           });
         });

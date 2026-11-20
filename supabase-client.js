@@ -467,6 +467,7 @@ async function fetchCitasFromSupabase() {
       .from('citas')
       .select('*')
       .order('fecha', { ascending: true });
+    console.log('📋 fetchCitasFromSupabase →', { data, error });
     if (error || !data) return null;
     // Mapear columnas de Supabase al formato que usa citas.js
     return data.map(r => ({

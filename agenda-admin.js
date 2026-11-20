@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const ADMIN_PIN = 'salo2026';
   const AUTH_KEY  = 'salome_admin_agenda_auth';
+  let _agendaSubscribed = false; // evitar doble suscripción al canal realtime
 
   // ── ELEMENTOS ──────────────────────────
   const pinOverlay    = document.getElementById('pinOverlay');
@@ -80,12 +81,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Suscribirse a cambios en tiempo real (otro dispositivo guarda → se actualiza aquí)
-    if (typeof subscribeToAgendaChanges === 'function') {
+    if (!_agendaSubscribed && typeof subscribeToAgendaChanges === 'function') {
+      _agendaSubscribed = true;
       subscribeToAgendaChanges((fresh) => {
         agendaData = fresh;
         renderDaysList();
         updateStats();
-        // Si hay un día seleccionado, re-renderizar su editor también
         if (selectedDay) renderDayEditor(selectedDay);
       });
     }

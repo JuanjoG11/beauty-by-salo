@@ -96,32 +96,20 @@ function registrarCita(data) {
 }
 
 // ── INIT PANEL DE CITAS ──────────────────
+let _citasPanelInitialized = false; // evitar doble suscripción
+
 function initCitasPanel() {
 
   let citas        = loadCitas();
   let currentWeek  = getWeekStart(new Date());
-  let filterDate   = null; // null = mostrar semana completa
+  let filterDate   = null;
 
   const container = document.getElementById('citasPanel');
   if (!container) return;
 
-  // Cargar frescos de Supabase al iniciar y suscribirse a cambios en tiempo real
-  loadCitasFresh().then(fresh => {
-    citas = fresh;
-    render();
-  });
-
-  if (typeof subscribeToCitasChanges === 'function') {
-    subscribeToCitasChanges((fresh) => {
-      citas = fresh;
-      saveCitas(citas); // actualizar caché local
-      render();
-    });
-  }
-
   // ── RENDER PRINCIPAL ──────────────────
   const render = () => {
-    citas = loadCitas();
+    // Usar la variable en memoria, no releer localStorage (que puede estar desactualizado)
     container.innerHTML = '';
 
     // TOOLBAR
@@ -407,7 +395,7 @@ function initCitasPanel() {
 
       const citaData = { nombre, servicio, fecha, hora, precio, abono, nota, estado };
 
-      citas = loadCitas();
+      // Trabajar con el array en memoria, no releer localStorage
       if (isNew) {
         const nueva = {
           id: 'cita-' + Date.now(),
@@ -442,7 +430,7 @@ function initCitasPanel() {
       delBtn.addEventListener('click', () => {
         if (!confirm('Eliminar esta cita?')) return;
         const citaAEliminar = citas.find(c => c.id === citaId);
-        citas = loadCitas().filter(c => c.id !== citaId);
+        citas = citas.filter(c => c.id !== citaId);
         saveCitas(citas);
         if (citaAEliminar) {
           if (typeof deleteCitaFromSupabase === 'function') deleteCitaFromSupabase(citaId);
@@ -464,7 +452,25 @@ function initCitasPanel() {
     setTimeout(() => el.classList.remove('visible'), 2500);
   };
 
-  render();
+  // Cargar frescos de Supabase al iniciar y renderizar con esos datos
+  loadCitasFresh().then(fresh => {
+    console.log('🌸 loadCitasFresh resultado →', fresh);
+    citas = fresh;
+    saveCitas(citas);
+    render();
+  });
+
+  // Suscribirse a cambios en tiempo real solo la primera vez
+  if (!_citasPanelInitialized) {
+    _citasPanelInitialized = true;
+    if (typeof subscribeToCitasChanges === 'function') {
+      subscribeToCitasChanges((fresh) => {
+        citas = fresh;
+        saveCitas(citas);
+        render();
+      });
+    }
+  }
 }
 
 // ── UTILIDADES ───────────────────────────
