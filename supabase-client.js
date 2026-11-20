@@ -488,28 +488,41 @@ async function fetchCitasFromSupabase() {
   }
 }
 
-/** Inserta o actualiza una sola cita en Supabase. */
+/** Inserta o actualiza una sola cita en Supabase. Reintenta una vez si falla. */
 async function saveCitaToSupabase(cita) {
   if (!supabaseClient) return false;
-  try {
-    const { error } = await supabaseClient.from('citas').upsert({
-      id:         cita.id,
-      nombre:     cita.nombre,
-      servicio:   cita.servicio  || '',
-      fecha:      cita.fecha,
-      hora:       cita.hora,
-      precio:     cita.precio    || 0,
-      abono:      cita.abono     || 0,
-      nota:       cita.nota      || '',
-      estado:     cita.estado    || 'pendiente',
-      updated_at: new Date().toISOString(),
-    }, { onConflict: 'id' });
-    if (error) { console.warn('saveCitaToSupabase error:', error); return false; }
-    return true;
-  } catch (e) {
-    console.warn('saveCitaToSupabase error:', e);
-    return false;
+
+  const payload = {
+    id:         cita.id,
+    nombre:     cita.nombre,
+    servicio:   cita.servicio  || '',
+    fecha:      cita.fecha,
+    hora:       cita.hora,
+    precio:     cita.precio    || 0,
+    abono:      cita.abono     || 0,
+    nota:       cita.nota      || '',
+    estado:     cita.estado    || 'pendiente',
+    updated_at: new Date().toISOString(),
+  };
+
+  for (let intento = 1; intento <= 2; intento++) {
+    try {
+      const { error } = await supabaseClient
+        .from('citas')
+        .upsert(payload, { onConflict: 'id' });
+
+      if (!error) {
+        console.log(`✅ saveCitaToSupabase OK [${cita.id}]`);
+        return true;
+      }
+      console.warn(`saveCitaToSupabase intento ${intento} error:`, error.message, error);
+    } catch (e) {
+      console.warn(`saveCitaToSupabase intento ${intento} excepción:`, e);
+    }
+    // Esperar 1.5s antes del segundo intento
+    if (intento < 2) await new Promise(r => setTimeout(r, 1500));
   }
+  return false;
 }
 
 /** Elimina una cita de Supabase por id. */
@@ -532,8 +545,16 @@ function subscribeToCitasChanges(onChangeCallback) {
     supabaseClient
       .channel('citas-realtime')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'citas' }, async () => {
-        const fresh = await fetchCitasFromSupabase();
-        if (fresh && typeof onChangeCallback === 'function') onChangeCallback(fresh);
+        let fresh = null;
+        try {
+          fresh = await fetchCitasFromSupabase();
+        } catch(e) {
+          console.warn('subscribeToCitasChanges: error al traer citas', e);
+        }
+        // Solo avisar si Supabase devolvió datos válidos (no null y no vacío inesperado)
+        if (fresh !== null && typeof onChangeCallback === 'function') {
+          onChangeCallback(fresh);
+        }
       })
       .subscribe();
   } catch (e) {

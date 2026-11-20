@@ -437,6 +437,11 @@
       </div>
     </div>
 
+    <!-- TAB 4 — CITAS -->
+    <div class="u-tab-content" id="utab-citas">
+      <div id="citasPanel"></div>
+    </div>
+
   </div><!-- /#adminApp -->
 
   <!-- Toast shared by all tabs -->
@@ -444,6 +449,7 @@
 
   <!-- Scripts (order matters) -->
   <script src="agenda-data.js"></script>
+  <script src="citas.js"></script>
   <script src="admin.js"></script>
   <script src="agenda-admin.js"></script>
   <script src="agenda-servicios-admin.js"></script>
@@ -460,32 +466,15 @@
     });
 
     // ── Agenda-admin.js auth bridge ────────────────────────────
-    // agenda-admin.js has its own DOMContentLoaded that calls checkAuth(),
-    // which looks for id="pinOverlay" and id="adminApp". Since pinOverlay is
-    // a hidden dummy and adminApp is our real container, agenda-admin.js's
-    // checkAuth will correctly keep pinOverlay hidden (display:none) and show
-    // adminApp once its own sessionStorage key is set.
-    //
-    // However, agenda-admin.js writes a SEPARATE AUTH_KEY ('salome_admin_agenda_auth')
-    // into sessionStorage. When admin.js already authenticated the user and set
-    // 'salome_admin_auth' = 'true', agenda-admin.js still needs its own key.
-    //
-    // We sync the two keys: after admin.js sets salome_admin_auth, also set
-    // salome_admin_agenda_auth so the agenda tab initializes correctly.
     (function syncAgendaAuth() {
-      // Run after all scripts have loaded
       window.addEventListener('load', () => {
         const adminKey  = 'salome_admin_auth';
         const agendaKey = 'salome_admin_agenda_auth';
 
-        // If already authenticated by admin.js, also mark agenda auth
         if (sessionStorage.getItem(adminKey) === 'true') {
           sessionStorage.setItem(agendaKey, 'true');
         }
 
-        // Watch for future auth (admin.js sets it on pinForm submit)
-        // We piggyback on the existing pinForm submit event by polling
-        // sessionStorage; a MutationObserver on adminApp visibility is cleaner.
         const appEl = document.getElementById('adminApp');
         if (appEl) {
           const obs = new MutationObserver(() => {
@@ -497,50 +486,30 @@
         }
       });
     })();
-  </script>
 
-    <!-- TAB 4: CITAS -->
-    <div class="u-tab-content" id="utab-citas">
-      <div id="citasPanel"></div>
-    </div>
+    // ── Inicializar panel de citas ─────────────────────────────
+    (function initCitasWhenReady() {
+      const app = document.getElementById('adminApp');
+      let citasInited = false;
 
-    <script src="citas.js"></script>
-    <script>
-      // Inicializar citas si ya está autenticado
-      document.addEventListener('DOMContentLoaded', () => {
-        const app = document.getElementById('adminApp');
-        let citasInited = false;
-
-        const checkInit = setInterval(() => {
-          if (app && app.style.display !== 'none') {
-            clearInterval(checkInit);
-            if (!citasInited && typeof initCitasPanel === 'function') {
-              citasInited = true;
-              initCitasPanel();
-            }
-          }
-        }, 400);
-
-        // Al cambiar al tab de citas, solo recargar frescos — no reinicializar
-        document.querySelectorAll('.u-tab').forEach(btn => {
-          btn.addEventListener('click', () => {
-            if (btn.dataset.tab === 'citas') {
-              if (!citasInited && typeof initCitasPanel === 'function') {
-                citasInited = true;
-                initCitasPanel();
-              } else if (typeof loadCitasFresh === 'function') {
-                loadCitasFresh().then(fresh => {
-                  if (typeof saveCitas === 'function') saveCitas(fresh);
-                  // Forzar re-render llamando initCitasPanel solo si el contenedor está vacío
-                  const panel = document.getElementById('citasPanel');
-                  if (panel && panel.innerHTML.trim() === '') initCitasPanel();
-                });
-              }
-            }
-          });
-        });
+      // Inicializar en cuanto el adminApp sea visible (post-login)
+      const obs = new MutationObserver(() => {
+        if (app.style.display !== 'none' && !citasInited) {
+          citasInited = true;
+          if (typeof initCitasPanel === 'function') initCitasPanel();
+        }
       });
-    </script>
+      obs.observe(app, { attributes: true, attributeFilter: ['style'] });
+
+      // Si ya estaba autenticado al cargar (sessionStorage activo)
+      window.addEventListener('load', () => {
+        if (app.style.display !== 'none' && !citasInited) {
+          citasInited = true;
+          if (typeof initCitasPanel === 'function') initCitasPanel();
+        }
+      });
+    })();
+  </script>
 </body>
 
 </html>

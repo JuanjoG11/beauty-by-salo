@@ -15,7 +15,6 @@ const ESTADOS = {
 
 // ── CARGA / GUARDA ───────────────────────
 function loadCitas() {
-  // Versión síncrona: lee el caché local
   try {
     const raw = localStorage.getItem(CITAS_KEY);
     if (raw) return JSON.parse(raw);
@@ -24,15 +23,49 @@ function loadCitas() {
 }
 
 function saveCitas(list) {
-  // Guardar localmente de inmediato
   localStorage.setItem(CITAS_KEY, JSON.stringify(list));
 }
 
-/** Carga citas frescas desde Supabase y actualiza el caché local. */
+/**
+ * Carga citas frescas desde Supabase y actualiza el caché local.
+ *
+ * REGLA DE ORO: nunca reemplazar el localStorage con una lista más corta
+ * que lo que ya hay guardado localmente. Esto evita que un fallo temporal
+ * de Supabase, un canal realtime disparado antes de que las citas se suban,
+ * o una tabla vacía en Supabase borren citas reales.
+ */
 async function loadCitasFresh() {
   if (typeof fetchCitasFromSupabase === 'function') {
-    const remote = await fetchCitasFromSupabase();
+    let remote = null;
+    try {
+      remote = await fetchCitasFromSupabase();
+    } catch(e) {
+      console.warn('loadCitasFresh: error al consultar Supabase', e);
+    }
+
     if (remote !== null) {
+      const localCitas = loadCitas();
+
+      // Si Supabase devuelve menos citas que el localStorage, conservar local
+      // y aprovechar para subir las que faltan en Supabase.
+      if (remote.length < localCitas.length) {
+        console.warn(
+          `⚠️ Supabase devolvió ${remote.length} citas pero localStorage tiene ${localCitas.length}.`,
+          'Conservando localStorage y subiendo las citas faltantes a Supabase.'
+        );
+        if (typeof saveCitaToSupabase === 'function') {
+          // Subir solo las que no están en Supabase (por id)
+          const remoteIds = new Set(remote.map(r => r.id));
+          for (const cita of localCitas) {
+            if (!remoteIds.has(cita.id)) {
+              saveCitaToSupabase(cita); // fire-and-forget
+            }
+          }
+        }
+        return localCitas;
+      }
+
+      // Supabase tiene igual o más citas → es la fuente de verdad
       localStorage.setItem(CITAS_KEY, JSON.stringify(remote));
       return remote;
     }
@@ -41,7 +74,6 @@ async function loadCitasFresh() {
 }
 
 // ── SINCRONIZACIÓN CITAS ↔ AGENDA ────────
-// Mapeo de estado de cita → estado de slot en la agenda
 const ESTADO_A_SLOT = {
   pendiente:  'pending',
   confirmada: 'taken',
@@ -49,11 +81,6 @@ const ESTADO_A_SLOT = {
   cancelada:  'available',
 };
 
-/**
- * Cuando una cita cambia de estado, actualiza el slot correspondiente
- * en la agenda (salome_agenda_navidad_2025) para que ambos sistemas
- * estén siempre sincronizados.
- */
 function syncSlotDesdeEstadoCita(fecha, hora, estadoCita) {
   try {
     const slotStatus = ESTADO_A_SLOT[estadoCita] ?? 'pending';
@@ -88,15 +115,13 @@ function registrarCita(data) {
   };
   citas.push(cita);
   saveCitas(citas);
-  // Subir a Supabase en segundo plano
   if (typeof saveCitaToSupabase === 'function') saveCitaToSupabase(cita);
-  // Marcar el slot como pending en la agenda
   syncSlotDesdeEstadoCita(cita.fecha, cita.hora, cita.estado);
   return cita;
 }
 
 // ── INIT PANEL DE CITAS ──────────────────
-let _citasPanelInitialized = false; // evitar doble suscripción
+let _citasPanelInitialized = false;
 
 function initCitasPanel() {
 
@@ -109,7 +134,6 @@ function initCitasPanel() {
 
   // ── RENDER PRINCIPAL ──────────────────
   const render = () => {
-    // Usar la variable en memoria, no releer localStorage (que puede estar desactualizado)
     container.innerHTML = '';
 
     // TOOLBAR
@@ -134,13 +158,13 @@ function initCitasPanel() {
     const stats = document.createElement('div');
     stats.className = 'citas-stats-row';
     const hoy = formatDateKey(new Date());
-    const citasHoy       = citas.filter(c => c.fecha === hoy);
-    const citasSemana    = citas.filter(c => {
+    const citasHoy    = citas.filter(c => c.fecha === hoy);
+    const citasSemana = citas.filter(c => {
       const d = parseDateKey(c.fecha);
       const end = new Date(currentWeek); end.setDate(end.getDate() + 6);
       return d >= currentWeek && d <= end;
     });
-    const pendientes = citas.filter(c => c.estado === 'pendiente').length;
+    const pendientes  = citas.filter(c => c.estado === 'pendiente').length;
     const confirmadas = citas.filter(c => c.estado === 'confirmada' && c.fecha >= hoy).length;
 
     stats.innerHTML = `
@@ -151,10 +175,8 @@ function initCitasPanel() {
     `;
     container.appendChild(stats);
 
-    // CALENDARIO SEMANAL
     renderCalendario(container);
 
-    // Eventos toolbar
     document.getElementById('citasPrevWeek').addEventListener('click', () => {
       currentWeek = new Date(currentWeek); currentWeek.setDate(currentWeek.getDate() - 7);
       filterDate = null;
@@ -193,15 +215,11 @@ function initCitasPanel() {
     const cal = document.createElement('div');
     cal.className = 'citas-calendar';
 
-    // Label de la semana
     const weekEnd = new Date(currentWeek); weekEnd.setDate(weekEnd.getDate() + 6);
     const weekLabel = document.getElementById('citasWeekLabel');
     if (weekLabel) weekLabel.textContent = `${formatShortDate(currentWeek)} — ${formatShortDate(weekEnd)}`;
 
-    // Cabeceras de días
     const dows = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
-    const header = document.createElement('div');
-    header.className = 'cal-header';
 
     const days = [];
     for (let i = 0; i < 7; i++) {
@@ -209,7 +227,6 @@ function initCitasPanel() {
       days.push(d);
     }
 
-    // Si hay filtro de fecha, solo mostrar ese día
     const displayDays = filterDate ? [parseDateKey(filterDate)] : days;
 
     displayDays.forEach(d => {
@@ -231,7 +248,6 @@ function initCitasPanel() {
       `;
       col.appendChild(colHeader);
 
-      // Ordenar por hora
       const sorted = [...citasDia].sort((a, b) => compareTimeStr(a.hora, b.hora));
 
       if (sorted.length === 0) {
@@ -255,7 +271,6 @@ function initCitasPanel() {
         });
       }
 
-      // Click en columna para agregar cita ese día
       colHeader.addEventListener('click', () => {
         openCitaModal(null, dateStr);
       });
@@ -284,10 +299,11 @@ function initCitasPanel() {
       </label>
     `).join('');
 
-    // Cargar servicios disponibles
     let svcsOptions = '<option value="">Selecciona...</option>';
     try {
-      const svcs = loadCustomServices ? loadCustomServices() : (typeof BOOKING_SERVICES !== 'undefined' ? BOOKING_SERVICES : []);
+      const svcs = (typeof loadCustomServices === 'function')
+        ? loadCustomServices()
+        : (typeof BOOKING_SERVICES !== 'undefined' ? BOOKING_SERVICES : []);
       svcs.forEach(s => {
         svcsOptions += `<option value="${s.name}" ${cita?.servicio === s.name ? 'selected' : ''}>${s.name} — $${s.price.toLocaleString('es-CO')}</option>`;
       });
@@ -347,7 +363,6 @@ function initCitasPanel() {
     document.body.appendChild(overlay);
     requestAnimationFrame(() => overlay.classList.add('visible'));
 
-    // Cerrar
     const close = () => {
       overlay.classList.remove('visible');
       setTimeout(() => overlay.remove(), 300);
@@ -357,10 +372,9 @@ function initCitasPanel() {
     document.getElementById('citaCancelBtn').addEventListener('click', close);
     overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
 
-    // Autocompletar precio al seleccionar servicio
     document.getElementById('cf-servicio').addEventListener('change', e => {
       try {
-        const svcs = loadCustomServices ? loadCustomServices() : BOOKING_SERVICES;
+        const svcs = (typeof loadCustomServices === 'function') ? loadCustomServices() : BOOKING_SERVICES;
         const svc = svcs.find(s => s.name === e.target.value);
         if (svc) {
           document.getElementById('cf-precio').value = svc.price;
@@ -369,7 +383,6 @@ function initCitasPanel() {
       } catch(err) {}
     });
 
-    // Estados interactivos
     card.querySelectorAll('.estado-option').forEach(opt => {
       opt.addEventListener('click', () => {
         card.querySelectorAll('.estado-option').forEach(o => o.classList.remove('selected'));
@@ -377,7 +390,7 @@ function initCitasPanel() {
       });
     });
 
-    // Guardar
+    // ── GUARDAR ──
     document.getElementById('citaSaveBtn').addEventListener('click', () => {
       const nombre   = document.getElementById('cf-nombre').value.trim();
       const servicio = document.getElementById('cf-servicio').value;
@@ -389,13 +402,11 @@ function initCitasPanel() {
       const estado   = card.querySelector('input[name="citaEstado"]:checked')?.value || 'pendiente';
 
       if (!nombre) { document.getElementById('cf-nombre').focus(); showCitaToast('El nombre es obligatorio.'); return; }
-      if (!fecha)  { document.getElementById('cf-fecha').focus();  showCitaToast('La fecha es obligatoria.'); return; }
+      if (!fecha)  { document.getElementById('cf-fecha').focus();  showCitaToast('La fecha es obligatoria.');  return; }
 
       const hora = formatTime24to12Citas(horaRaw);
-
       const citaData = { nombre, servicio, fecha, hora, precio, abono, nota, estado };
 
-      // Trabajar con el array en memoria, no releer localStorage
       if (isNew) {
         const nueva = {
           id: 'cita-' + Date.now(),
@@ -424,11 +435,11 @@ function initCitasPanel() {
       showCitaToast(isNew ? 'Cita registrada.' : 'Cita actualizada.');
     });
 
-    // Eliminar
+    // ── ELIMINAR ──
     const delBtn = document.getElementById('citaDeleteBtn');
     if (delBtn) {
       delBtn.addEventListener('click', () => {
-        if (!confirm('Eliminar esta cita?')) return;
+        if (!confirm('¿Eliminar esta cita?')) return;
         const citaAEliminar = citas.find(c => c.id === citaId);
         citas = citas.filter(c => c.id !== citaId);
         saveCitas(citas);
@@ -452,22 +463,29 @@ function initCitasPanel() {
     setTimeout(() => el.classList.remove('visible'), 2500);
   };
 
-  // Cargar frescos de Supabase al iniciar y renderizar con esos datos
+  // ── INICIO: cargar frescos de Supabase ──
   loadCitasFresh().then(fresh => {
-    console.log('🌸 loadCitasFresh resultado →', fresh);
+    console.log('🌸 initCitasPanel: citas cargadas →', fresh.length);
     citas = fresh;
-    saveCitas(citas);
+    // No sobreescribir localStorage aquí — loadCitasFresh ya lo hizo si correspondía
     render();
   });
 
-  // Suscribirse a cambios en tiempo real solo la primera vez
+  // ── REALTIME: solo suscribirse una vez ──
   if (!_citasPanelInitialized) {
     _citasPanelInitialized = true;
     if (typeof subscribeToCitasChanges === 'function') {
       subscribeToCitasChanges((fresh) => {
-        citas = fresh;
-        saveCitas(citas);
-        render();
+        // Misma regla de oro: no reemplazar con una lista más corta
+        if (fresh.length >= citas.length) {
+          citas = fresh;
+          saveCitas(citas);
+          render();
+        } else {
+          console.warn(
+            `⚠️ Realtime devolvió ${fresh.length} citas vs ${citas.length} en memoria. Ignorando actualización parcial.`
+          );
+        }
       });
     }
   }
@@ -521,7 +539,6 @@ function formatTime24to12Citas(t) {
   return `${h}:${m} ${period}`;
 }
 
-// Función que llama agenda.js al confirmar
 function registrarCitaDesdeAgenda(data) {
   registrarCita(data);
 }
