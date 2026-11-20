@@ -606,6 +606,7 @@ body {
 
 .legend-dot.available { background: #fff; border: 1.5px solid var(--pink-soft); }
 .legend-dot.selected  { background: var(--pink-dark); }
+.legend-dot.pending   { background: #e8c99a; border: 1.5px solid #d4a96a; }
 .legend-dot.taken     { background: #ddc8d4; }
 
 .times-grid {

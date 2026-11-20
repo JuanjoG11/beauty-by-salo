@@ -174,13 +174,16 @@ const BOOKING_SERVICES = [
 ];
 
 // ──────────────────────────────────────────
-// FUNCIONES DE DATOS (LocalStorage)
+// FUNCIONES DE DATOS (Supabase + LocalStorage fallback)
 // ──────────────────────────────────────────
 
 /**
- * Carga la agenda guardada (días + horarios configurados por admin)
+ * Carga la agenda. Intenta Supabase primero; si falla usa localStorage.
+ * Para mantener compatibilidad con código síncrono (agenda-admin.js),
+ * también expone una versión síncrona que lee el caché local.
  */
 function loadAgendaData() {
+  // Versión síncrona: lee el caché en localStorage
   try {
     const raw = localStorage.getItem(AGENDA_STORAGE_KEY);
     if (raw) return JSON.parse(raw);
@@ -189,10 +192,47 @@ function loadAgendaData() {
 }
 
 /**
- * Guarda la agenda completa
+ * Guarda la agenda. Escribe en localStorage de inmediato (síncrono)
+ * y lanza la escritura a Supabase en paralelo (asíncrono).
  */
 function saveAgendaData(data) {
+  // 1. Guardar localmente de inmediato para que la UI no espere
   localStorage.setItem(AGENDA_STORAGE_KEY, JSON.stringify(data));
+
+  // 2. Sincronizar con Supabase en segundo plano
+  if (typeof saveAgendaToSupabase === 'function') {
+    saveAgendaToSupabase(data).then(ok => {
+      if (!ok) console.warn('⚠️ Agenda guardada solo localmente (Supabase no disponible).');
+    });
+  }
+}
+
+/**
+ * Carga la agenda desde Supabase y actualiza el caché local.
+ * Si Supabase está vacío pero localStorage tiene datos, sube esos datos a Supabase.
+ * Llama al callback con los datos frescos. Usar al iniciar la app.
+ */
+async function loadAgendaDataFresh(onLoaded) {
+  if (typeof fetchAgendaFromSupabase === 'function') {
+    const remote = await fetchAgendaFromSupabase();
+    if (remote && remote.days && remote.days.length > 0) {
+      // Supabase tiene datos → actualizar caché local y usar esos
+      localStorage.setItem(AGENDA_STORAGE_KEY, JSON.stringify(remote));
+      if (typeof onLoaded === 'function') onLoaded(remote);
+      return remote;
+    }
+    // Supabase vacío → tomar localStorage y subirlo a Supabase
+    const local = loadAgendaData();
+    if (local.days && local.days.length > 0 && typeof saveAgendaToSupabase === 'function') {
+      saveAgendaToSupabase(local); // subir en segundo plano, no bloquear
+    }
+    if (typeof onLoaded === 'function') onLoaded(local);
+    return local;
+  }
+  // Sin Supabase disponible → usar localStorage
+  const local = loadAgendaData();
+  if (typeof onLoaded === 'function') onLoaded(local);
+  return local;
 }
 
 /**

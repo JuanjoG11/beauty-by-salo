@@ -360,10 +360,117 @@ async function uploadPhotoFile(file, serviceId) {
   });
 }
 
+// ══════════════════════════════════════════
+// AGENDA — Supabase sync
+// ══════════════════════════════════════════
+
+/**
+ * Carga la agenda desde Supabase.
+ * Devuelve null si Supabase no está disponible o falla.
+ */
+async function fetchAgendaFromSupabase() {
+  if (!supabaseClient) return null;
+  try {
+    const { data, error } = await supabaseClient
+      .from('agenda')
+      .select('*')
+      .order('fecha', { ascending: true });
+
+    if (error || !data) return null;
+
+    // Reconstruir el formato { days: [...] } que usa el resto del código
+    const days = data.map(row => ({
+      date:  row.fecha,
+      slots: row.slots || []
+    }));
+    return { days, updatedAt: new Date().toISOString() };
+  } catch (e) {
+    console.warn('fetchAgendaFromSupabase error:', e);
+    return null;
+  }
+}
+
+/**
+ * Guarda la agenda completa en Supabase (upsert por fecha).
+ * Devuelve true si tuvo éxito, false si no.
+ */
+async function saveAgendaToSupabase(agendaData) {
+  if (!supabaseClient) return false;
+  try {
+    // Convertir { days: [...] } a filas para la tabla `agenda`
+    const rows = agendaData.days.map(day => ({
+      fecha:      day.date,
+      slots:      day.slots || [],
+      updated_at: new Date().toISOString()
+    }));
+
+    if (rows.length === 0) {
+      // Si no hay días, borrar todo en Supabase también
+      await supabaseClient.from('agenda').delete().neq('fecha', '');
+      return true;
+    }
+
+    // Upsert de todos los días existentes
+    const { error: upsertError } = await supabaseClient
+      .from('agenda')
+      .upsert(rows, { onConflict: 'fecha' });
+
+    if (upsertError) {
+      console.warn('saveAgendaToSupabase upsert error:', upsertError);
+      return false;
+    }
+
+    // Eliminar días que ya no existen en agendaData
+    const fechas = agendaData.days.map(d => d.date);
+    if (fechas.length > 0) {
+      await supabaseClient
+        .from('agenda')
+        .delete()
+        .not('fecha', 'in', `(${fechas.map(f => `"${f}"`).join(',')})`);
+    }
+
+    return true;
+  } catch (e) {
+    console.warn('saveAgendaToSupabase error:', e);
+    return false;
+  }
+}
+
+/**
+ * Suscribirse a cambios en tiempo real de la tabla `agenda`.
+ * Se llama cuando Supabase detecta un cambio desde cualquier dispositivo.
+ */
+function subscribeToAgendaChanges(onChangeCallback) {
+  if (!supabaseClient) return;
+  try {
+    supabaseClient
+      .channel('agenda-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'agenda' }, async () => {
+        const fresh = await fetchAgendaFromSupabase();
+        if (fresh && typeof onChangeCallback === 'function') onChangeCallback(fresh);
+      })
+      .subscribe();
+  } catch (e) {
+    console.warn('subscribeToAgendaChanges error:', e);
+  }
+}
+
 // Generador de SQL para inicializar Supabase
 const SQL_INIT_SCHEMA = `
 -- Script de Creación de Tablas y Datos Semilla para Beauty Studio Salomé Osorio
 -- Copia y pega esto en la pestaña SQL Editor de tu Dashboard de Supabase
+
+-- 0. Tabla de Agenda (horarios disponibles)
+CREATE TABLE IF NOT EXISTS public.agenda (
+  fecha       TEXT PRIMARY KEY,
+  slots       JSONB NOT NULL DEFAULT '[]',
+  updated_at  TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+ALTER TABLE public.agenda ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Lectura pública de agenda" ON public.agenda;
+DROP POLICY IF EXISTS "Escritura pública de agenda" ON public.agenda;
+CREATE POLICY "Lectura pública de agenda" ON public.agenda FOR SELECT USING (true);
+CREATE POLICY "Escritura pública de agenda" ON public.agenda FOR ALL USING (true);
 
 -- 1. Tabla de Servicios
 CREATE TABLE IF NOT EXISTS public.services (

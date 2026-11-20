@@ -26,6 +26,37 @@ function saveCitas(list) {
   localStorage.setItem(CITAS_KEY, JSON.stringify(list));
 }
 
+// ── SINCRONIZACIÓN CITAS ↔ AGENDA ────────
+// Mapeo de estado de cita → estado de slot en la agenda
+const ESTADO_A_SLOT = {
+  pendiente:  'pending',
+  confirmada: 'taken',
+  completada: 'taken',
+  cancelada:  'available',
+};
+
+/**
+ * Cuando una cita cambia de estado, actualiza el slot correspondiente
+ * en la agenda (salome_agenda_navidad_2025) para que ambos sistemas
+ * estén siempre sincronizados.
+ */
+function syncSlotDesdeEstadoCita(fecha, hora, estadoCita) {
+  try {
+    const slotStatus = ESTADO_A_SLOT[estadoCita] ?? 'pending';
+    const data = loadAgendaData();
+    const day = data.days.find(d => d.date === fecha);
+    if (day) {
+      const slot = day.slots.find(s => s.time === hora);
+      if (slot) {
+        slot.status = slotStatus;
+        saveAgendaData(data);
+      }
+    }
+  } catch(e) {
+    console.warn('syncSlotDesdeEstadoCita error:', e);
+  }
+}
+
 // ── REGISTRAR CITA (llamado desde agenda.js) ──
 function registrarCita(data) {
   const citas = loadCitas();
@@ -43,6 +74,8 @@ function registrarCita(data) {
   };
   citas.push(cita);
   saveCitas(citas);
+  // Sincronizar el slot en la agenda (pending = esperando confirmación)
+  syncSlotDesdeEstadoCita(cita.fecha, cita.hora, cita.estado);
   return cita;
 }
 
@@ -352,9 +385,20 @@ function initCitasPanel() {
           createdAt: new Date().toISOString(),
         };
         citas.push(nueva);
+        // Sincronizar el slot en la agenda
+        syncSlotDesdeEstadoCita(nueva.fecha, nueva.hora, nueva.estado);
       } else {
         const idx = citas.findIndex(c => c.id === citaId);
-        if (idx !== -1) citas[idx] = { ...citas[idx], ...citaData };
+        if (idx !== -1) {
+          const anterior = citas[idx];
+          citas[idx] = { ...anterior, ...citaData };
+          // Si cambió el estado o la hora/fecha, sincronizar
+          // Si la hora o fecha cambió, liberar el slot anterior
+          if (anterior.fecha !== citaData.fecha || anterior.hora !== citaData.hora) {
+            syncSlotDesdeEstadoCita(anterior.fecha, anterior.hora, 'cancelada');
+          }
+          syncSlotDesdeEstadoCita(citaData.fecha, citaData.hora, citaData.estado);
+        }
       }
       saveCitas(citas);
       close();
@@ -367,8 +411,13 @@ function initCitasPanel() {
     if (delBtn) {
       delBtn.addEventListener('click', () => {
         if (!confirm('Eliminar esta cita?')) return;
+        const citaAEliminar = citas.find(c => c.id === citaId);
         citas = loadCitas().filter(c => c.id !== citaId);
         saveCitas(citas);
+        // Liberar el slot en la agenda al eliminar la cita
+        if (citaAEliminar) {
+          syncSlotDesdeEstadoCita(citaAEliminar.fecha, citaAEliminar.hora, 'cancelada');
+        }
         close();
         render();
         showCitaToast('Cita eliminada.');

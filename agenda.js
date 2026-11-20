@@ -170,9 +170,12 @@ document.addEventListener('DOMContentLoaded', () => {
   if (toStep2Btn) {
     toStep2Btn.addEventListener('click', () => {
       if (!state.selectedService) return;
-      state.agendaData = loadAgendaData();
-      renderCalendar();
-      goToStep(2);
+      // Recargar datos frescos de Supabase antes de mostrar el calendario
+      loadAgendaDataFresh((fresh) => {
+        state.agendaData = fresh;
+        renderCalendar();
+        goToStep(2);
+      });
     });
   }
 
@@ -268,7 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.type = 'button';
       btn.className = `time-btn ${slot.status} ${state.selectedTime === slot.time ? 'selected' : ''}`;
       btn.textContent = slot.time;
-      btn.disabled = slot.status === 'taken';
+      btn.disabled = slot.status !== 'available';
 
       if (slot.status === 'available') {
         btn.addEventListener('click', () => {
@@ -391,10 +394,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const waMsg = encodeURI(rawMsg).replace(/&/g, '%26').replace(/#/g, '%23').replace(/\+/g, '%2B');
       const waUrl = `https://wa.me/${WA_NUMBER}?text=${waMsg}`;
 
-      // Marcar el slot como tomado en localStorage (reserva optimista)
-      markSlotAsTaken(state.selectedDate, state.selectedTime);
-
-      // Registrar cita en el módulo de citas
+      // Registrar cita en el módulo de citas (esto marca el slot como pending internamente)
       if (typeof registrarCitaDesdeAgenda === 'function') {
         registrarCitaDesdeAgenda({
           nombre:   name,

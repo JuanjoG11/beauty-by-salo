@@ -66,15 +66,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ── INIT ───────────────────────────────
   const init = () => {
-    agendaData = loadAgendaData();
+    // Cargar datos frescos de Supabase al iniciar
+    loadAgendaDataFresh((fresh) => {
+      agendaData = fresh;
 
-    // Setear fecha mínima del input = hoy
-    const today = new Date();
-    newDayInput.min = formatDateKey(today);
-    newDayInput.value = formatDateKey(new Date(today.getTime() + 86400000)); // mañana por defecto
+      // Setear fecha mínima del input = hoy
+      const today = new Date();
+      newDayInput.min = formatDateKey(today);
+      newDayInput.value = formatDateKey(new Date(today.getTime() + 86400000)); // mañana por defecto
 
-    renderDaysList();
-    updateStats();
+      renderDaysList();
+      updateStats();
+    });
+
+    // Suscribirse a cambios en tiempo real (otro dispositivo guarda → se actualiza aquí)
+    if (typeof subscribeToAgendaChanges === 'function') {
+      subscribeToAgendaChanges((fresh) => {
+        agendaData = fresh;
+        renderDaysList();
+        updateStats();
+        // Si hay un día seleccionado, re-renderizar su editor también
+        if (selectedDay) renderDayEditor(selectedDay);
+      });
+    }
   };
 
   // ── RENDER LISTA DE DÍAS ───────────────
@@ -392,6 +406,23 @@ document.addEventListener('DOMContentLoaded', () => {
       a.click();
       URL.revokeObjectURL(url);
       showToast('📋 Agenda exportada.');
+    });
+  }
+
+  // ── SUBIR A SUPABASE (migración manual) ──
+  const syncSupabaseBtn = document.getElementById('syncSupabaseBtn');
+  if (syncSupabaseBtn) {
+    syncSupabaseBtn.addEventListener('click', async () => {
+      if (typeof saveAgendaToSupabase !== 'function') {
+        showToast('⚠️ Supabase no está disponible.');
+        return;
+      }
+      syncSupabaseBtn.disabled = true;
+      syncSupabaseBtn.textContent = '☁️ Subiendo...';
+      const ok = await saveAgendaToSupabase(agendaData);
+      syncSupabaseBtn.disabled = false;
+      syncSupabaseBtn.textContent = '☁️ Subir a Supabase';
+      showToast(ok ? '✅ Agenda sincronizada con Supabase.' : '❌ Error al subir a Supabase.');
     });
   }
 
