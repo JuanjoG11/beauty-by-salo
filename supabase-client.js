@@ -455,6 +455,91 @@ function subscribeToAgendaChanges(onChangeCallback) {
   }
 }
 
+// ══════════════════════════════════════════
+// CITAS — Supabase sync
+// ══════════════════════════════════════════
+
+/** Trae todas las citas desde Supabase. Devuelve array o null. */
+async function fetchCitasFromSupabase() {
+  if (!supabaseClient) return null;
+  try {
+    const { data, error } = await supabaseClient
+      .from('citas')
+      .select('*')
+      .order('fecha', { ascending: true });
+    if (error || !data) return null;
+    // Mapear columnas de Supabase al formato que usa citas.js
+    return data.map(r => ({
+      id:        r.id,
+      nombre:    r.nombre,
+      servicio:  r.servicio,
+      fecha:     r.fecha,
+      hora:      r.hora,
+      precio:    r.precio,
+      abono:     r.abono,
+      nota:      r.nota,
+      estado:    r.estado,
+      createdAt: r.created_at,
+    }));
+  } catch (e) {
+    console.warn('fetchCitasFromSupabase error:', e);
+    return null;
+  }
+}
+
+/** Inserta o actualiza una sola cita en Supabase. */
+async function saveCitaToSupabase(cita) {
+  if (!supabaseClient) return false;
+  try {
+    const { error } = await supabaseClient.from('citas').upsert({
+      id:         cita.id,
+      nombre:     cita.nombre,
+      servicio:   cita.servicio  || '',
+      fecha:      cita.fecha,
+      hora:       cita.hora,
+      precio:     cita.precio    || 0,
+      abono:      cita.abono     || 0,
+      nota:       cita.nota      || '',
+      estado:     cita.estado    || 'pendiente',
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'id' });
+    if (error) { console.warn('saveCitaToSupabase error:', error); return false; }
+    return true;
+  } catch (e) {
+    console.warn('saveCitaToSupabase error:', e);
+    return false;
+  }
+}
+
+/** Elimina una cita de Supabase por id. */
+async function deleteCitaFromSupabase(citaId) {
+  if (!supabaseClient) return false;
+  try {
+    const { error } = await supabaseClient.from('citas').delete().eq('id', citaId);
+    if (error) { console.warn('deleteCitaFromSupabase error:', error); return false; }
+    return true;
+  } catch (e) {
+    console.warn('deleteCitaFromSupabase error:', e);
+    return false;
+  }
+}
+
+/** Escucha cambios en tiempo real en la tabla citas. */
+function subscribeToCitasChanges(onChangeCallback) {
+  if (!supabaseClient) return;
+  try {
+    supabaseClient
+      .channel('citas-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'citas' }, async () => {
+        const fresh = await fetchCitasFromSupabase();
+        if (fresh && typeof onChangeCallback === 'function') onChangeCallback(fresh);
+      })
+      .subscribe();
+  } catch (e) {
+    console.warn('subscribeToCitasChanges error:', e);
+  }
+}
+
 // Generador de SQL para inicializar Supabase
 const SQL_INIT_SCHEMA = `
 -- Script de Creación de Tablas y Datos Semilla para Beauty Studio Salomé Osorio
@@ -471,6 +556,26 @@ DROP POLICY IF EXISTS "Lectura pública de agenda" ON public.agenda;
 DROP POLICY IF EXISTS "Escritura pública de agenda" ON public.agenda;
 CREATE POLICY "Lectura pública de agenda" ON public.agenda FOR SELECT USING (true);
 CREATE POLICY "Escritura pública de agenda" ON public.agenda FOR ALL USING (true);
+
+-- 0b. Tabla de Citas
+CREATE TABLE IF NOT EXISTS public.citas (
+  id          TEXT PRIMARY KEY,
+  nombre      TEXT NOT NULL,
+  servicio    TEXT,
+  fecha       TEXT NOT NULL,
+  hora        TEXT NOT NULL,
+  precio      INTEGER DEFAULT 0,
+  abono       INTEGER DEFAULT 0,
+  nota        TEXT DEFAULT '',
+  estado      TEXT DEFAULT 'pendiente',
+  created_at  TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at  TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+ALTER TABLE public.citas ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Lectura pública de citas" ON public.citas;
+DROP POLICY IF EXISTS "Escritura pública de citas" ON public.citas;
+CREATE POLICY "Lectura pública de citas" ON public.citas FOR SELECT USING (true);
+CREATE POLICY "Escritura pública de citas" ON public.citas FOR ALL USING (true);
 
 -- 1. Tabla de Servicios
 CREATE TABLE IF NOT EXISTS public.services (

@@ -15,6 +15,7 @@ const ESTADOS = {
 
 // ── CARGA / GUARDA ───────────────────────
 function loadCitas() {
+  // Versión síncrona: lee el caché local
   try {
     const raw = localStorage.getItem(CITAS_KEY);
     if (raw) return JSON.parse(raw);
@@ -23,7 +24,20 @@ function loadCitas() {
 }
 
 function saveCitas(list) {
+  // Guardar localmente de inmediato
   localStorage.setItem(CITAS_KEY, JSON.stringify(list));
+}
+
+/** Carga citas frescas desde Supabase y actualiza el caché local. */
+async function loadCitasFresh() {
+  if (typeof fetchCitasFromSupabase === 'function') {
+    const remote = await fetchCitasFromSupabase();
+    if (remote !== null) {
+      localStorage.setItem(CITAS_KEY, JSON.stringify(remote));
+      return remote;
+    }
+  }
+  return loadCitas();
 }
 
 // ── SINCRONIZACIÓN CITAS ↔ AGENDA ────────
@@ -64,8 +78,8 @@ function registrarCita(data) {
     id:        'cita-' + Date.now(),
     nombre:    data.nombre,
     servicio:  data.servicio,
-    fecha:     data.fecha,      // "2026-12-20"
-    hora:      data.hora,       // "3:30 p.m."
+    fecha:     data.fecha,
+    hora:      data.hora,
     precio:    data.precio,
     abono:     data.abono,
     nota:      data.nota || '',
@@ -74,7 +88,9 @@ function registrarCita(data) {
   };
   citas.push(cita);
   saveCitas(citas);
-  // Sincronizar el slot en la agenda (pending = esperando confirmación)
+  // Subir a Supabase en segundo plano
+  if (typeof saveCitaToSupabase === 'function') saveCitaToSupabase(cita);
+  // Marcar el slot como pending en la agenda
   syncSlotDesdeEstadoCita(cita.fecha, cita.hora, cita.estado);
   return cita;
 }
@@ -88,6 +104,20 @@ function initCitasPanel() {
 
   const container = document.getElementById('citasPanel');
   if (!container) return;
+
+  // Cargar frescos de Supabase al iniciar y suscribirse a cambios en tiempo real
+  loadCitasFresh().then(fresh => {
+    citas = fresh;
+    render();
+  });
+
+  if (typeof subscribeToCitasChanges === 'function') {
+    subscribeToCitasChanges((fresh) => {
+      citas = fresh;
+      saveCitas(citas); // actualizar caché local
+      render();
+    });
+  }
 
   // ── RENDER PRINCIPAL ──────────────────
   const render = () => {
@@ -385,22 +415,22 @@ function initCitasPanel() {
           createdAt: new Date().toISOString(),
         };
         citas.push(nueva);
-        // Sincronizar el slot en la agenda
+        saveCitas(citas);
+        if (typeof saveCitaToSupabase === 'function') saveCitaToSupabase(nueva);
         syncSlotDesdeEstadoCita(nueva.fecha, nueva.hora, nueva.estado);
       } else {
         const idx = citas.findIndex(c => c.id === citaId);
         if (idx !== -1) {
           const anterior = citas[idx];
           citas[idx] = { ...anterior, ...citaData };
-          // Si cambió el estado o la hora/fecha, sincronizar
-          // Si la hora o fecha cambió, liberar el slot anterior
+          saveCitas(citas);
+          if (typeof saveCitaToSupabase === 'function') saveCitaToSupabase(citas[idx]);
           if (anterior.fecha !== citaData.fecha || anterior.hora !== citaData.hora) {
             syncSlotDesdeEstadoCita(anterior.fecha, anterior.hora, 'cancelada');
           }
           syncSlotDesdeEstadoCita(citaData.fecha, citaData.hora, citaData.estado);
         }
       }
-      saveCitas(citas);
       close();
       render();
       showCitaToast(isNew ? 'Cita registrada.' : 'Cita actualizada.');
@@ -414,8 +444,8 @@ function initCitasPanel() {
         const citaAEliminar = citas.find(c => c.id === citaId);
         citas = loadCitas().filter(c => c.id !== citaId);
         saveCitas(citas);
-        // Liberar el slot en la agenda al eliminar la cita
         if (citaAEliminar) {
+          if (typeof deleteCitaFromSupabase === 'function') deleteCitaFromSupabase(citaId);
           syncSlotDesdeEstadoCita(citaAEliminar.fecha, citaAEliminar.hora, 'cancelada');
         }
         close();
